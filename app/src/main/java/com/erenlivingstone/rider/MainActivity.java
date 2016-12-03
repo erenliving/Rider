@@ -1,6 +1,8 @@
 package com.erenlivingstone.rider;
 
+import android.Manifest;
 import android.content.Intent;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,10 +16,10 @@ public class MainActivity extends AppCompatActivity
         implements HomeFragment.OnSearchModeSelectedListener,
         LocationFragment.OnLocationModeSelectedListener {
 
-    public final static String TAG = MainActivity.class.getSimpleName();
+    public static final String TAG = MainActivity.class.getSimpleName();
 
-    public final static String EXTRA_SEARCH_MODE = "com.eren.rider.SEARCH_MODE";
-    public final static String EXTRA_LOCATION_MODE = "com.eren.rider.LOCATION_MODE";
+    public static final String EXTRA_SEARCH_MODE = "com.eren.rider.SEARCH_MODE";
+    public static final String EXTRA_LOCATION_MODE = "com.eren.rider.LOCATION_MODE";
 
     private HomeFragment homeFragment;
     private LocationFragment locationFragment;
