@@ -1,0 +1,22 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.erenlivingstone.rider.appscreens.home.HomeFragment">
+
+    <Button
+        android:id="@+id/search_bikes_button"
+        android:layout_width="300dp"
+        android:layout_height="36dp"
+        android:text="I want to ride!"
+        android:layout_centerInParent="true"/>
+
+    <Button
+        android:id="@+id/search_parking_button"
+        android:layout_width="300dp"
+        android:layout_height="36dp"
+        android:text="I want to get off!"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/search_bikes_button"/>
+
+</RelativeLayout>
