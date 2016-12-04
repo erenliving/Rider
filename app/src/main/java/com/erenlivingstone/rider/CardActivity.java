@@ -21,7 +21,6 @@ public class CardActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         searchMode = (SearchMode) intent.getSerializableExtra(MainActivity.EXTRA_SEARCH_MODE);
-        locationMode = (LocationMode) intent.getSerializableExtra(MainActivity.EXTRA_LOCATION_MODE);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()

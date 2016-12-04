@@ -2,30 +2,35 @@ package com.erenlivingstone.rider;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.erenlivingstone.rider.appscreens.home.HomeFragment;
 import com.erenlivingstone.rider.appscreens.location.LocationFragment;
 import com.erenlivingstone.rider.constants.LocationMode;
 import com.erenlivingstone.rider.constants.SearchMode;
+import com.erenlivingstone.rider.utils.Utils;
+import com.google.android.gms.maps.model.LatLng;
 
-public class MainActivity extends AppCompatActivity
-        implements HomeFragment.OnSearchModeSelectedListener,
-        LocationFragment.OnLocationModeSelectedListener {
+public class MainActivity extends AppCompatActivity implements
+        HomeFragment.OnSearchModeSelectedListener,
+        LocationFragment.OnLocationInteractionListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
     public static final String EXTRA_SEARCH_MODE = "com.eren.rider.SEARCH_MODE";
-    public static final String EXTRA_LOCATION_MODE = "com.eren.rider.LOCATION_MODE";
 
     private HomeFragment homeFragment;
     private LocationFragment locationFragment;
 
     private SearchMode searchMode;
-    private LocationMode locationMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,8 @@ public class MainActivity extends AppCompatActivity
         showHomeFragment();
     }
 
+    //region Fragment instance initialization
+
     private void initializeHomeFragment() {
         homeFragment = HomeFragment.newInstance();
     }
@@ -47,6 +54,10 @@ public class MainActivity extends AppCompatActivity
     private void initializeLocationFragment() {
         locationFragment = LocationFragment.newInstance();
     }
+
+    //endregion
+
+    //region Navigation methods
 
     private void showHomeFragment() {
         getSupportFragmentManager()
@@ -65,9 +76,12 @@ public class MainActivity extends AppCompatActivity
     private void startCardActivity() {
         Intent intent = new Intent(this, CardActivity.class);
         intent.putExtra(EXTRA_SEARCH_MODE, searchMode);
-        intent.putExtra(EXTRA_LOCATION_MODE, locationMode);
         startActivity(intent);
     }
+
+    //endregion
+
+    //region Interface method implementations
 
     @Override
     public void onSearchModeSelected(SearchMode searchMode) {
@@ -84,14 +98,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLocationModeSelected(LocationMode locationMode) {
-        this.locationMode = locationMode;
-        switch (locationMode) {
-            case DEVICE:
-                startCardActivity();
-                break;
-            case CUSTOM:
-                // TODO: complete this case
-                break;
-        }
+        // TODO: complete this method
     }
+
+    @Override
+    public void onLocationFound(LatLng location) {
+        startCardActivity();
+    }
+
+    //endregion
 }
