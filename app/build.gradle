@@ -44,4 +44,5 @@ dependencies {
 
     // Square's Retrofit 2 HTTP library
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
 }
