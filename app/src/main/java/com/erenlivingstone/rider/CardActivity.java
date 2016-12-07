@@ -7,12 +7,15 @@ import android.os.Bundle;
 import com.erenlivingstone.rider.appscreens.bikes.BikesFragment;
 import com.erenlivingstone.rider.constants.LocationMode;
 import com.erenlivingstone.rider.constants.SearchMode;
+import com.erenlivingstone.rider.data.model.Stations;
+import com.google.android.gms.maps.model.LatLng;
 
 public class CardActivity extends AppCompatActivity
         implements BikesFragment.OnBikesFragmentInteractionListener {
 
     private SearchMode searchMode;
-    private LocationMode locationMode;
+    private LatLng location;
+    private Stations stations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +24,8 @@ public class CardActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         searchMode = (SearchMode) intent.getSerializableExtra(MainActivity.EXTRA_SEARCH_MODE);
+        location = intent.getParcelableExtra(MainActivity.EXTRA_LOCATION);
+        stations.stationBeanList = intent.getParcelableArrayListExtra(MainActivity.EXTRA_STATIONS);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()

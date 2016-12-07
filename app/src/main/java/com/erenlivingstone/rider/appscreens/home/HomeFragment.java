@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.erenlivingstone.rider.R;
 import com.erenlivingstone.rider.constants.SearchMode;
@@ -31,6 +32,7 @@ public class HomeFragment extends Fragment {
     private OnSearchModeSelectedListener mListener;
 
     private Button searchBikesButton, searchParkingButton;
+    private ProgressBar indeterminateProgressBar;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -70,6 +72,8 @@ public class HomeFragment extends Fragment {
                 onButtonPressed(SearchMode.PARKING);
             }
         });
+
+        indeterminateProgressBar = (ProgressBar) view.findViewById(R.id.indeterminate_progress_bar);
     }
 
     @Override
@@ -92,14 +96,26 @@ public class HomeFragment extends Fragment {
     /**
      * Called when a search button is clicked, it communicates this
      * event to the Activity along with the corresponding SearchMode
-     * value to be used in a later part of the app.
+     * value to be used in a later part of the app. Also displays an
+     * indeterminate ProgressBar to show activity.
      *
      * @param searchMode the SearchMode value of what to look for
      */
     public void onButtonPressed(SearchMode searchMode) {
+        showIndeterminateProgressBar();
+
         if (mListener != null) {
             mListener.onSearchModeSelected(searchMode);
         }
+    }
+
+    /**
+     * Hides the buttons and displays the indeterminate progress bar
+     */
+    public void showIndeterminateProgressBar() {
+        searchBikesButton.setVisibility(View.GONE);
+        searchParkingButton.setVisibility(View.GONE);
+        indeterminateProgressBar.setVisibility(View.VISIBLE);
     }
 
     public interface OnSearchModeSelectedListener {

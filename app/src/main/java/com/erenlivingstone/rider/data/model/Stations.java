@@ -10,5 +10,6 @@ import java.util.List;
  */
 
 public class Stations {
-    public List<Station> stations;
+    String executionTime;
+    public List<Station> stationBeanList;
 }

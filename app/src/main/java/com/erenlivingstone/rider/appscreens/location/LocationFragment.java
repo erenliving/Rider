@@ -175,10 +175,12 @@ public class LocationFragment extends Fragment {
     }
 
     /**
-     * Run when fine location permission has been granted
+     * Run when fine location permission has been granted, starts a Service to run in the
+     * background and broadcasts results when Location is found. Also displays an indeterminate
+     * ProgressBar to show activity.
      */
     private void fineLocationPermissionGranted() {
-        showIntederminateProgressBar();
+        showIndeterminateProgressBar();
 
         // Start a request for location, wait for local broadcast to receive latest location
         UtilityService.requestLocation(getActivity());
@@ -190,7 +192,6 @@ public class LocationFragment extends Fragment {
     private void showLocationPermissionSnackbar() {
         View view = getView();
         if (view != null) {
-            // TODO: double check if this can find the activity root layout, or if needs changing to fragment root layout
             Snackbar.make(view,
                     R.string.location_permission_explanation, Snackbar.LENGTH_LONG)
                     .setAction(R.string.location_permission_explanation_action, new View.OnClickListener() {
@@ -223,14 +224,13 @@ public class LocationFragment extends Fragment {
     /**
      * Hides the buttons and displays the indeterminate progress bar
      */
-    public void showIntederminateProgressBar() {
+    public void showIndeterminateProgressBar() {
         myLocationButton.setVisibility(View.GONE);
         enterLocationButton.setVisibility(View.GONE);
         indeterminateProgressBar.setVisibility(View.VISIBLE);
     }
 
     public interface OnLocationInteractionListener {
-        void onLocationModeSelected(LocationMode locationMode);
         void onLocationFound(LatLng location);
     }
 }

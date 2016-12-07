@@ -18,10 +18,14 @@ import com.erenlivingstone.rider.appscreens.home.HomeFragment;
 import com.erenlivingstone.rider.appscreens.location.LocationFragment;
 import com.erenlivingstone.rider.constants.LocationMode;
 import com.erenlivingstone.rider.constants.SearchMode;
+import com.erenlivingstone.rider.data.model.Station;
 import com.erenlivingstone.rider.data.model.Stations;
 import com.erenlivingstone.rider.networking.BikeShareTorontoAPI;
 import com.erenlivingstone.rider.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,11 +41,17 @@ public class MainActivity extends AppCompatActivity implements
     public static final String TAG = MainActivity.class.getSimpleName();
 
     public static final String EXTRA_SEARCH_MODE = "com.eren.rider.SEARCH_MODE";
+    public static final String EXTRA_LOCATION = "com.eren.rider.LOCATION";
+    public static final String EXTRA_STATIONS = "com.eren.rider.STATIONS";
 
     private HomeFragment homeFragment;
     private LocationFragment locationFragment;
 
     private SearchMode searchMode;
+
+    private Stations stations;
+
+    //region Lifecycle methods
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements
 
         showHomeFragment();
     }
+
+    //endregion
 
     //region Fragment instance initialization
 
@@ -84,9 +96,12 @@ public class MainActivity extends AppCompatActivity implements
                 .commit();
     }
 
-    private void startCardActivity() {
+    private void startCardActivity(SearchMode searchMode, LatLng location, Stations stations) {
         Intent intent = new Intent(this, CardActivity.class);
         intent.putExtra(EXTRA_SEARCH_MODE, searchMode);
+        intent.putExtra(EXTRA_LOCATION, location);
+        // Convert List<Station> into ArrayList<Station> so it can be passed as Parcelable
+        intent.putParcelableArrayListExtra(EXTRA_STATIONS, new ArrayList<>(stations.stationBeanList));
         startActivity(intent);
     }
 
@@ -94,9 +109,43 @@ public class MainActivity extends AppCompatActivity implements
 
     //region Interface method implementations
 
+    //region HomeFragment interface methods
+
     @Override
     public void onSearchModeSelected(SearchMode searchMode) {
+        // Save the selected SearchMode for use later
         this.searchMode = searchMode;
+
+        // Build and queue a GET request to get the latest data from the BikeShare API
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BikeShareTorontoAPI.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        BikeShareTorontoAPI bikeShareTorontoAPI = retrofit.create(BikeShareTorontoAPI.class);
+        Call<Stations> call = bikeShareTorontoAPI.loadStations();
+        // Asynchronous call to get data, calls back to this class
+        call.enqueue(this);
+    }
+
+    //endregion
+
+    //region LocationFragment interface methods
+
+    @Override
+    public void onLocationFound(LatLng location) {
+        startCardActivity(searchMode, location, stations);
+    }
+
+    //endregion
+
+    //region Retrofit Callback methods
+
+    @Override
+    public void onResponse(Call<Stations> call, Response<Stations> response) {
+        stations = response.body();
+        // TODO: store this response's result
+
+        // Navigate to next screen now that latest data has been fetched, based on search selection
         switch (searchMode) {
             case BIKES:
                 showLocationFragment();
@@ -108,31 +157,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLocationModeSelected(LocationMode locationMode) {
-        // TODO: complete this method
-    }
-
-    @Override
-    public void onLocationFound(LatLng location) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BikeShareTorontoAPI.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        BikeShareTorontoAPI bikeShareTorontoAPI = retrofit.create(BikeShareTorontoAPI.class);
-        Call<Stations> call = bikeShareTorontoAPI.loadStations();
-        // Asynchronous call to get data
-        call.enqueue(this);
-    }
-
-    @Override
-    public void onResponse(Call<Stations> call, Response<Stations> response) {
-        Stations stations = response.body();
-        // TODO: store this response's result
-
-        startCardActivity();
-    }
-
-    @Override
     public void onFailure(Call<Stations> call, Throwable t) {
         Log.e(TAG, t.getLocalizedMessage(), t);
 
@@ -140,6 +164,8 @@ public class MainActivity extends AppCompatActivity implements
         Toast.makeText(this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
         showHomeFragment();
     }
+
+    //endregion
 
     //endregion
 }
