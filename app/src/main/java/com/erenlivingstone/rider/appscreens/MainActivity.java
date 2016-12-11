@@ -1,42 +1,24 @@
-package com.erenlivingstone.rider;
+package com.erenlivingstone.rider.appscreens;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
+import com.erenlivingstone.rider.R;
 import com.erenlivingstone.rider.appscreens.home.HomeFragment;
+import com.erenlivingstone.rider.appscreens.home.HomePresenter;
 import com.erenlivingstone.rider.appscreens.location.LocationFragment;
-import com.erenlivingstone.rider.constants.LocationMode;
+import com.erenlivingstone.rider.appscreens.location.LocationPresenter;
 import com.erenlivingstone.rider.constants.SearchMode;
-import com.erenlivingstone.rider.data.model.Station;
 import com.erenlivingstone.rider.data.model.Stations;
-import com.erenlivingstone.rider.networking.BikeShareTorontoAPI;
-import com.erenlivingstone.rider.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
 public class MainActivity extends AppCompatActivity implements
-        HomeFragment.OnSearchModeSelectedListener,
-        LocationFragment.OnLocationInteractionListener,
-        Callback<Stations> {
+        HomeFragment.OnHomeFragmentInteractionListener,
+        LocationFragment.OnLocationFragmentInteractionListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -72,10 +54,16 @@ public class MainActivity extends AppCompatActivity implements
 
     private void initializeHomeFragment() {
         homeFragment = HomeFragment.newInstance();
+
+        // Initialize the Presenter, it hooks itself to the View during construction
+        HomePresenter homePresenter = new HomePresenter(homeFragment);
     }
 
     private void initializeLocationFragment() {
         locationFragment = LocationFragment.newInstance();
+
+        // Initialize the Presenter, it hooks itself to the View during construction
+        LocationPresenter locationPresenter = new LocationPresenter(locationFragment);
     }
 
     //endregion
@@ -113,18 +101,14 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSearchModeSelected(SearchMode searchMode) {
-        // Save the selected SearchMode for use later
         this.searchMode = searchMode;
+    }
 
-        // Build and queue a GET request to get the latest data from the BikeShare API
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BikeShareTorontoAPI.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        BikeShareTorontoAPI bikeShareTorontoAPI = retrofit.create(BikeShareTorontoAPI.class);
-        Call<Stations> call = bikeShareTorontoAPI.loadStations();
-        // Asynchronous call to get data, calls back to this class
-        call.enqueue(this);
+    @Override
+    public void onStationsLoaded(Stations stations) {
+        this.stations = stations;
+
+        showLocationFragment();
     }
 
     //endregion
@@ -134,35 +118,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onLocationFound(LatLng location) {
         startCardActivity(searchMode, location, stations);
-    }
-
-    //endregion
-
-    //region Retrofit Callback methods
-
-    @Override
-    public void onResponse(Call<Stations> call, Response<Stations> response) {
-        stations = response.body();
-        // TODO: store this response's result
-
-        // Navigate to next screen now that latest data has been fetched, based on search selection
-        switch (searchMode) {
-            case BIKES:
-                showLocationFragment();
-                break;
-            case PARKING:
-                // TODO: complete this case
-                break;
-        }
-    }
-
-    @Override
-    public void onFailure(Call<Stations> call, Throwable t) {
-        Log.e(TAG, t.getLocalizedMessage(), t);
-
-        // Display error message to user and navigate back to start so they aren't stuck
-        Toast.makeText(this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-        showHomeFragment();
     }
 
     //endregion

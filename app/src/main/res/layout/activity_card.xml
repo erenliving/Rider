@@ -8,5 +8,5 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.erenlivingstone.rider.CardActivity"
+    tools:context="com.erenlivingstone.rider.appscreens.CardActivity"
     tools:ignore="MergeRootFrame" />

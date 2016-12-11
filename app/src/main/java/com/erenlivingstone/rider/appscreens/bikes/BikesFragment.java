@@ -9,8 +9,10 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.erenlivingstone.rider.R;
+import com.erenlivingstone.rider.data.model.Station;
 
 /**
  * A {@link Fragment} subclass containing a CardView with
@@ -23,13 +25,20 @@ import com.erenlivingstone.rider.R;
  * Use the {@link BikesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BikesFragment extends Fragment {
+public class BikesFragment extends Fragment implements BikesContract.View {
 
     public static final String TAG = BikesFragment.class.getSimpleName();
+
+    private BikesContract.Presenter mPresenter;
+
+    public interface OnBikesFragmentInteractionListener {
+        void onBikesFragmentInteraction(boolean selectBike);
+    }
 
     private OnBikesFragmentInteractionListener mListener;
 
     private CardView mCardView;
+    private TextView mLocationTextView, mNumOfBikesTextView, mLastUpdatedTextView;
 
     public BikesFragment() {
         // Required empty public constructor
@@ -55,6 +64,9 @@ public class BikesFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCardView = (CardView) view.findViewById(R.id.card_view);
+        mLocationTextView = (TextView) view.findViewById(R.id.location_text_view);
+        mNumOfBikesTextView = (TextView) view.findViewById(R.id.number_of_bikes_text_view);
+        mLastUpdatedTextView = (TextView) view.findViewById(R.id.last_updated_text_view);
     }
 
     @Override
@@ -69,6 +81,12 @@ public class BikesFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.start();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
@@ -80,7 +98,19 @@ public class BikesFragment extends Fragment {
         }
     }
 
-    public interface OnBikesFragmentInteractionListener {
-        void onBikesFragmentInteraction(boolean selectBike);
+    //region BikesContract.View methods
+
+    @Override
+    public void setPresenter(BikesContract.Presenter presenter) {
+        mPresenter = presenter;
     }
+
+    @Override
+    public void showStationCard(Station station) {
+        mLocationTextView.setText(station.getLocation().toString());
+        mNumOfBikesTextView.setText(String.valueOf(station.getAvailableBikes()));
+        mLastUpdatedTextView.setText(station.getLastCommunicationTime());
+    }
+
+    //endregion
 }

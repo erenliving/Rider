@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 
 import com.erenlivingstone.rider.R;
 import com.erenlivingstone.rider.constants.SearchMode;
+import com.erenlivingstone.rider.data.model.Stations;
 
 /**
  * The initial landing screen of the app.
@@ -19,17 +20,24 @@ import com.erenlivingstone.rider.constants.SearchMode;
  * choose what to search for (available bike or available parking).
  *
  * Activities that contain this fragment must implement the
- * {@link HomeFragment.OnSearchModeSelectedListener} interface
+ * {@link HomeFragment.OnHomeFragmentInteractionListener} interface
  * to handle interaction events.
  *
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements HomeContract.View {
 
     public static final String TAG = HomeFragment.class.getSimpleName();
 
-    private OnSearchModeSelectedListener mListener;
+    private HomeContract.Presenter mPresenter;
+
+    public interface OnHomeFragmentInteractionListener {
+        void onSearchModeSelected(SearchMode searchMode);
+        void onStationsLoaded(Stations stations);
+    }
+
+    private OnHomeFragmentInteractionListener mListener;
 
     private Button searchBikesButton, searchParkingButton;
     private ProgressBar indeterminateProgressBar;
@@ -61,7 +69,7 @@ public class HomeFragment extends Fragment {
         searchBikesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onButtonPressed(SearchMode.BIKES);
+                mPresenter.onSearchButtonPressed(SearchMode.BIKES);
             }
         });
 
@@ -69,7 +77,7 @@ public class HomeFragment extends Fragment {
         searchParkingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onButtonPressed(SearchMode.PARKING);
+                mPresenter.onSearchButtonPressed(SearchMode.PARKING);
             }
         });
 
@@ -79,11 +87,11 @@ public class HomeFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnSearchModeSelectedListener) {
-            mListener = (OnSearchModeSelectedListener) context;
+        if (context instanceof OnHomeFragmentInteractionListener) {
+            mListener = (OnHomeFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnSearchModeSelectedListener");
+                    + " must implement OnHomeFragmentInteractionListener");
         }
     }
 
@@ -93,33 +101,56 @@ public class HomeFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * Called when a search button is clicked, it communicates this
-     * event to the Activity along with the corresponding SearchMode
-     * value to be used in a later part of the app. Also displays an
-     * indeterminate ProgressBar to show activity.
-     *
-     * @param searchMode the SearchMode value of what to look for
-     */
-    public void onButtonPressed(SearchMode searchMode) {
-        showIndeterminateProgressBar();
+    //region HomeContract.View methods
 
+    @Override
+    public void setPresenter(HomeContract.Presenter presenter) {
+        mPresenter = presenter;
+    }
+
+    /**
+     * Method to display or hide the indeterminate progress bar indicating loading
+     *
+     * @param active true to display indicator, false to hide indicator
+     */
+    @Override
+    public void setLoadingIndicator(boolean active) {
+        if (active) {
+            searchBikesButton.setVisibility(View.GONE);
+            searchParkingButton.setVisibility(View.GONE);
+            indeterminateProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            searchBikesButton.setVisibility(View.VISIBLE);
+            searchParkingButton.setVisibility(View.VISIBLE);
+            indeterminateProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Communicates the selected SearchMode value to the Activity
+     *
+     * @param searchMode the selected SearchMode
+     */
+    @Override
+    public void onSearchModeSelected(SearchMode searchMode) {
         if (mListener != null) {
             mListener.onSearchModeSelected(searchMode);
         }
     }
 
     /**
-     * Hides the buttons and displays the indeterminate progress bar
+     * Communicates that the network has finished loading the latest data of Stations to the
+     * Activity
+     *
+     * @param stations the latest Stations data from the BikeShare API
      */
-    public void showIndeterminateProgressBar() {
-        searchBikesButton.setVisibility(View.GONE);
-        searchParkingButton.setVisibility(View.GONE);
-        indeterminateProgressBar.setVisibility(View.VISIBLE);
+    @Override
+    public void onStationsLoaded(Stations stations) {
+        if (mListener != null) {
+            mListener.onStationsLoaded(stations);
+        }
     }
 
-    public interface OnSearchModeSelectedListener {
-        void onSearchModeSelected(SearchMode searchMode);
-    }
+    //endregion
 
 }

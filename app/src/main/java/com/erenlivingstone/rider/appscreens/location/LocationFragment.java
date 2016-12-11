@@ -33,35 +33,28 @@ import com.google.android.gms.maps.model.LatLng;
  * to give a location to use when searching.
  *
  * Activities that contain this fragment must implement the
- * {@link LocationFragment.OnLocationInteractionListener} interface
+ * {@link LocationFragment.OnLocationFragmentInteractionListener} interface
  * to handle interaction events.
  *
  * Use the {@link LocationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LocationFragment extends Fragment {
+public class LocationFragment extends Fragment implements LocationContract.View {
 
     public static final String TAG = LocationFragment.class.getSimpleName();
 
-    private static final int PERMISSION_REQUEST_CODE = 0;
+    private LocationContract.Presenter mPresenter;
 
-    private OnLocationInteractionListener mListener;
+    public interface OnLocationFragmentInteractionListener {
+        void onLocationFound(LatLng location);
+    }
+
+    private OnLocationFragmentInteractionListener mListener;
+
+    private static final int PERMISSION_REQUEST_CODE = 0;
 
     private Button myLocationButton, enterLocationButton;
     private ProgressBar indeterminateProgressBar;
-
-    private BroadcastReceiver locationBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Location location = intent.getParcelableExtra(UtilityService.EXTRA_LOCATION);
-            if (location != null) {
-                LatLng latestLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                if (mListener != null) {
-                    mListener.onLocationFound(latestLocation);
-                }
-            }
-        }
-    };
 
     public LocationFragment() {
         // Required empty public constructor
@@ -85,7 +78,7 @@ public class LocationFragment extends Fragment {
         myLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onButtonPressed(LocationMode.DEVICE);
+                mPresenter.onLocationButtonPressed(LocationMode.DEVICE, getActivity());
             }
         });
 
@@ -93,7 +86,7 @@ public class LocationFragment extends Fragment {
         enterLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onButtonPressed(LocationMode.CUSTOM);
+                mPresenter.onLocationButtonPressed(LocationMode.CUSTOM, getActivity());
             }
         });
 
@@ -103,25 +96,29 @@ public class LocationFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnLocationInteractionListener) {
-            mListener = (OnLocationInteractionListener) context;
+        if (context instanceof OnLocationFragmentInteractionListener) {
+            mListener = (OnLocationFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnLocationInteractionListener");
+                    + " must implement OnLocationFragmentInteractionListener");
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        // Forward broadcasts to the Presenter
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
-                locationBroadcastReceiver, UtilityService.getLocationUpdatedIntentFilter());
+                ((LocationPresenter) mPresenter).locationBroadcastReceiver, UtilityService
+                        .getLocationUpdatedIntentFilter());
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(locationBroadcastReceiver);
+        // Unregister broadcasts to the Presenter
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(
+                ((LocationPresenter)mPresenter).locationBroadcastReceiver);
     }
 
     @Override
@@ -130,66 +127,63 @@ public class LocationFragment extends Fragment {
         mListener = null;
     }
 
-    //region Event methods
+    //region Permission methods
 
     /**
-     * Called when a search button is clicked, it communicates this
-     * event to the Activity along with the corresponding LocationMode
-     * value to be used in a later part of the app.
-     *
-     * @param locationMode the LocationMode value of what location source to use
+     * Permissions request result callback
      */
-    public void onButtonPressed(LocationMode locationMode) {
-        switch (locationMode) {
-            case DEVICE:
-                // Check fine location permission has been granted
-                if (!Utils.checkFineLocationPermission(getContext())) {
-                    // See if user has denied permission in the past
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(
-                            getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        // Show a snackbar explaining the request instead
-                        showLocationPermissionSnackbar();
-                    } else {
-                        // Otherwise request permission from user
-                        requestFineLocationPermission();
-                    }
-                } else {
-                    // Otherwise permission is granted (which is always the case on pre-M devices)
-                    fineLocationPermissionGranted();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mPresenter.fineLocationPermissionGranted(getActivity());
                 }
-                break;
-            case CUSTOM:
                 break;
         }
     }
 
     //endregion
 
-    //region Permission methods
+    //region LocationContract.View methods
+
+    @Override
+    public void setPresenter(LocationContract.Presenter presenter) {
+        mPresenter = presenter;
+    }
+
+    /**
+     * Method to display or hide the indeterminate progress bar indicating finding location
+     *
+     * @param active true to display indicator, false to hide indicator
+     */
+    @Override
+    public void setLoadingIndicator(boolean active) {
+        if (active) {
+            myLocationButton.setVisibility(View.GONE);
+            enterLocationButton.setVisibility(View.GONE);
+            indeterminateProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            myLocationButton.setVisibility(View.VISIBLE);
+            enterLocationButton.setVisibility(View.VISIBLE);
+            indeterminateProgressBar.setVisibility(View.GONE);
+        }
+    }
 
     /**
      * Request the fine location permission from the user
      */
-    private void requestFineLocationPermission() {
+    @Override
+    public void requestFineLocationPermission() {
         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
-    }
-
-    /**
-     * Run when fine location permission has been granted, starts a Service to run in the
-     * background and broadcasts results when Location is found. Also displays an indeterminate
-     * ProgressBar to show activity.
-     */
-    private void fineLocationPermissionGranted() {
-        showIndeterminateProgressBar();
-
-        // Start a request for location, wait for local broadcast to receive latest location
-        UtilityService.requestLocation(getActivity());
     }
 
     /**
      * Show a permission explanation snackbar for using Location
      */
-    private void showLocationPermissionSnackbar() {
+    @Override
+    public void showLocationPermissionSnackbar() {
         View view = getView();
         if (view != null) {
             Snackbar.make(view,
@@ -205,32 +199,16 @@ public class LocationFragment extends Fragment {
     }
 
     /**
-     * Permissions request result callback
+     * Communicates that the device has found its Location to the Activity
+     *
+     * @param location the location coordinates of the device
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PERMISSION_REQUEST_CODE:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    fineLocationPermissionGranted();
-                }
-                break;
+    public void onLocationFound(LatLng location) {
+        if (mListener != null) {
+            mListener.onLocationFound(location);
         }
     }
 
     //endregion
-
-    /**
-     * Hides the buttons and displays the indeterminate progress bar
-     */
-    public void showIndeterminateProgressBar() {
-        myLocationButton.setVisibility(View.GONE);
-        enterLocationButton.setVisibility(View.GONE);
-        indeterminateProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    public interface OnLocationInteractionListener {
-        void onLocationFound(LatLng location);
-    }
 }

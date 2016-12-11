@@ -3,6 +3,8 @@ package com.erenlivingstone.rider.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by Eren on 04/12/2016.
  *
@@ -11,39 +13,49 @@ import android.os.Parcelable;
  */
 
 public class Station implements Parcelable {
-    int id;
-    String name;
-    String terminalName;
-    String lastCommWithServer; // timestamp
-    int lat;
-    int lng;
-    boolean installed;
-    boolean locked;
-    String installDate; // timestamp
-    String removalDate; // timestamp
-    boolean temporary;
-    boolean isPublic;
-    int nbBikes;
-    int nbEmptyDocks;
-    String latestUpdateTime; // timestamp
 
+    int id;
+    String stationName;
+    int availableDocks;
+    int totalDocks;
+    double latitude;
+    double longitude;
+    String statusValue;
+    int statusKey;
+    String status;
+    int availableBikes;
+    String stAddress1;
+    String stAddress2;
+    String city;
+    String postalCode;
+    String location;
+    String altitude;
+    boolean testStation;
+    String lastCommunicationTime;
+    String landmark;
+    boolean is_renting;
 
     private Station(Parcel in) {
         id = in.readInt();
-        name = in.readString();
-        terminalName = in.readString();
-        lastCommWithServer = in.readString();
-        lat = in.readInt();
-        lng = in.readInt();
-        installed = in.readByte() != 0;
-        locked = in.readByte() != 0;
-        installDate = in.readString();
-        removalDate = in.readString();
-        temporary = in.readByte() != 0;
-        isPublic = in.readByte() != 0;
-        nbBikes = in.readInt();
-        nbEmptyDocks = in.readInt();
-        latestUpdateTime = in.readString();
+        stationName = in.readString();
+        availableDocks = in.readInt();
+        totalDocks = in.readInt();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+        statusValue = in.readString();
+        statusKey = in.readInt();
+        status = in.readString();
+        availableBikes = in.readInt();
+        stAddress1 = in.readString();
+        stAddress2 = in.readString();
+        city = in.readString();
+        postalCode = in.readString();
+        location = in.readString();
+        altitude = in.readString();
+        testStation = in.readByte() != 0;
+        lastCommunicationTime = in.readString();
+        landmark = in.readString();
+        is_renting = in.readByte() != 0;
     }
 
     public static final Creator<Station> CREATOR = new Creator<Station>() {
@@ -66,19 +78,36 @@ public class Station implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
-        parcel.writeString(name);
-        parcel.writeString(terminalName);
-        parcel.writeString(lastCommWithServer);
-        parcel.writeInt(lat);
-        parcel.writeInt(lng);
-        parcel.writeByte((byte) (installed ? 1 : 0));
-        parcel.writeByte((byte) (locked ? 1 : 0));
-        parcel.writeString(installDate);
-        parcel.writeString(removalDate);
-        parcel.writeByte((byte) (temporary ? 1 : 0));
-        parcel.writeByte((byte) (isPublic ? 1 : 0));
-        parcel.writeInt(nbBikes);
-        parcel.writeInt(nbEmptyDocks);
-        parcel.writeString(latestUpdateTime);
+        parcel.writeString(stationName);
+        parcel.writeInt(availableDocks);
+        parcel.writeInt(totalDocks);
+        parcel.writeDouble(latitude);
+        parcel.writeDouble(longitude);
+        parcel.writeString(statusValue);
+        parcel.writeInt(statusKey);
+        parcel.writeString(status);
+        parcel.writeInt(availableBikes);
+        parcel.writeString(stAddress1);
+        parcel.writeString(stAddress2);
+        parcel.writeString(city);
+        parcel.writeString(postalCode);
+        parcel.writeString(location);
+        parcel.writeString(altitude);
+        parcel.writeByte((byte) (testStation ? 1 : 0));
+        parcel.writeString(lastCommunicationTime);
+        parcel.writeString(landmark);
+        parcel.writeByte((byte) (is_renting ? 1 : 0));
+    }
+
+    public LatLng getLocation() {
+        return new LatLng(latitude, longitude);
+    }
+
+    public int getAvailableBikes() {
+        return availableBikes;
+    }
+
+    public String getLastCommunicationTime() {
+        return lastCommunicationTime;
     }
 }
