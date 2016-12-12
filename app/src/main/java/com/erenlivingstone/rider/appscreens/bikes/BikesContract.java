@@ -12,7 +12,8 @@ public interface BikesContract {
 
     interface View extends BaseView<Presenter> {
 
-        void showStationCard(Station station);
+        void showStationCard(String stationName, String availableBikes, String distance,
+                             String location, String lastCommunicationTime);
 
     }
 

@@ -22,44 +22,73 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/station_name_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:maxLines="1"
+                android:paddingTop="8dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="St George St / Bloor St W"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
             <ImageView
                 android:id="@+id/thumbnail_image_view"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                android:layout_alignParentTop="true"
-                android:layout_margin="8dp"
+                android:layout_below="@id/station_name_text_view"
+                android:layout_margin="16dp"
                 android:background="@android:color/white"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/bike1" />
 
             <TextView
+                android:id="@+id/available_bikes_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/thumbnail_image_view"
+                android:paddingBottom="8dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="15 available bikes"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/distance_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/available_bikes_text_view"
+                android:maxLines="1"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="5min walk (500m)"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"/>
+
+            <TextView
                 android:id="@+id/location_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/thumbnail_image_view"
+                android:layout_below="@+id/distance_text_view"
                 android:maxLines="1"
-                android:padding="8dp"
-                android:text="102 Yonge St. (Yonge &amp; King)"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/number_of_bikes_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/location_text_view"
-                android:padding="8dp"
-                android:text="15 bikes available"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="123 Bloor St W, Toronto, ON"
                 android:textColor="@android:color/white"
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/last_updated_text_view"
+                android:id="@+id/last_communication_time_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/number_of_bikes_text_view"
+                android:layout_below="@+id/location_text_view"
                 android:maxLines="3"
                 android:padding="8dp"
                 android:text="Last Updated: 2016-12-01 12:34pm EST"

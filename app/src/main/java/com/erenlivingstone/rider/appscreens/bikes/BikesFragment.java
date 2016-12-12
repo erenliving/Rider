@@ -1,7 +1,6 @@
 package com.erenlivingstone.rider.appscreens.bikes;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -38,7 +37,8 @@ public class BikesFragment extends Fragment implements BikesContract.View {
     private OnBikesFragmentInteractionListener mListener;
 
     private CardView mCardView;
-    private TextView mLocationTextView, mNumOfBikesTextView, mLastUpdatedTextView;
+    private TextView mStationNameTextView, mAvailableBikesTextView, mDistanceTextView,
+            mLocationTextView, mLastCommunicationTimeTextView;
 
     public BikesFragment() {
         // Required empty public constructor
@@ -64,9 +64,11 @@ public class BikesFragment extends Fragment implements BikesContract.View {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCardView = (CardView) view.findViewById(R.id.card_view);
+        mStationNameTextView = (TextView) view.findViewById(R.id.station_name_text_view);
+        mAvailableBikesTextView = (TextView) view.findViewById(R.id.available_bikes_text_view);
+        mDistanceTextView = (TextView) view.findViewById(R.id.distance_text_view);
         mLocationTextView = (TextView) view.findViewById(R.id.location_text_view);
-        mNumOfBikesTextView = (TextView) view.findViewById(R.id.number_of_bikes_text_view);
-        mLastUpdatedTextView = (TextView) view.findViewById(R.id.last_updated_text_view);
+        mLastCommunicationTimeTextView = (TextView) view.findViewById(R.id.last_communication_time_text_view);
     }
 
     @Override
@@ -106,10 +108,13 @@ public class BikesFragment extends Fragment implements BikesContract.View {
     }
 
     @Override
-    public void showStationCard(Station station) {
-        mLocationTextView.setText(station.getLocation().toString());
-        mNumOfBikesTextView.setText(String.valueOf(station.getAvailableBikes()));
-        mLastUpdatedTextView.setText(station.getLastCommunicationTime());
+    public void showStationCard(String stationName, String availableBikes, String distance,
+                                String location, String lastCommunicationTime) {
+        mStationNameTextView.setText(stationName);
+        mAvailableBikesTextView.setText(availableBikes + " available bikes");
+        mDistanceTextView.setText(distance);
+        mLocationTextView.setText(location);
+        mLastCommunicationTimeTextView.setText("Last communicated: " + lastCommunicationTime);
     }
 
     //endregion

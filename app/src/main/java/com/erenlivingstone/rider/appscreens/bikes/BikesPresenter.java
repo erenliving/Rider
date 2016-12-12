@@ -2,6 +2,7 @@ package com.erenlivingstone.rider.appscreens.bikes;
 
 import com.erenlivingstone.rider.data.model.Station;
 import com.erenlivingstone.rider.data.model.Stations;
+import com.erenlivingstone.rider.utils.Utils;
 
 /**
  * Created by Eren on 10/12/2016.
@@ -34,7 +35,14 @@ public class BikesPresenter implements BikesContract.Presenter {
         }
         // TODO: Do I need an additional case here if mCurrentStation is null? When would it become null?
 
-        mBikesView.showStationCard(mCurrentStation);
+        String distance = "5min walk (500m)"; // TODO: calculate the actual distance
+
+        String lastCommunicationTime = Utils.getFormattedTimestampForDisplay(
+                mCurrentStation.getLastCommunicationTime());
+
+        mBikesView.showStationCard(mCurrentStation.getStationName(),
+                String.valueOf(mCurrentStation.getAvailableBikes()), distance,
+                mCurrentStation.getLocation().toString(), lastCommunicationTime);
     }
 
     private Station findClosestStation(Stations stations) {

@@ -99,6 +99,10 @@ public class Station implements Parcelable {
         parcel.writeByte((byte) (is_renting ? 1 : 0));
     }
 
+    public String getStationName() {
+        return stationName;
+    }
+
     public LatLng getLocation() {
         return new LatLng(latitude, longitude);
     }

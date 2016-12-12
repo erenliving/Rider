@@ -6,8 +6,16 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Eren-DSK on 03/12/2016.
@@ -59,5 +67,27 @@ public class Utils {
             return new LatLng(latDbl, lngDbl);
         }
         return null;
+    }
+
+    /**
+     * Transforms the input String into one ready for display in the UI
+     *
+     * @param timestamp String with format yyyy-MM-dd HH:mm:ss
+     * @return String with format MMM d, yyyy HH:mm, or the input String if error occurs
+     */
+    public static String getFormattedTimestampForDisplay(String timestamp) {
+        String formattedTimestamp = timestamp;
+
+        try {
+            SimpleDateFormat dateTimeFormat = (SimpleDateFormat) DateFormat.getDateTimeInstance();
+            dateTimeFormat.applyPattern("yyyy-MM-dd HH:mm:ss");
+            Date date = dateTimeFormat.parse(timestamp);
+            dateTimeFormat.applyPattern("MMM d, yyyy HH:mm");
+            formattedTimestamp = dateTimeFormat.format(date);
+        } catch (Exception e) {
+            Log.e(TAG, e.getLocalizedMessage(), e); // ClassCastException, ParseException
+        }
+
+        return formattedTimestamp;
     }
 }
