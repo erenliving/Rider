@@ -37,7 +37,7 @@ public class CardActivity extends AppCompatActivity
                     .commit();
 
             // Initialize the Presenter, it hooks itself to the View during construction
-            BikesPresenter bikesPresenter = new BikesPresenter(bikesFragment, stations);
+            BikesPresenter bikesPresenter = new BikesPresenter(bikesFragment, location, stations);
         }
 
         if (savedInstanceState != null) {

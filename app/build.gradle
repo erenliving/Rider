@@ -35,6 +35,9 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:10.0.1'
     compile 'com.google.android.gms:play-services-maps:10.0.1'
 
+    // Google Maps Android API utility library
+    compile 'com.google.maps.android:android-maps-utils:0.4'
+
     // Required for local unit tests (JUnit 4 framework)
     testCompile 'junit:junit:4.12'
 
