@@ -12,7 +12,7 @@ import com.google.android.gms.maps.model.LatLng;
  * This is used to map the JSON keys to the object by GSON.
  */
 
-public class Station implements Parcelable {
+public class Station implements Parcelable, Comparable<Station> {
 
     int id;
     String stationName;
@@ -34,6 +34,9 @@ public class Station implements Parcelable {
     String lastCommunicationTime;
     String landmark;
     boolean is_renting;
+    double distance;
+
+    //region Parcelable methods
 
     private Station(Parcel in) {
         id = in.readInt();
@@ -56,6 +59,7 @@ public class Station implements Parcelable {
         lastCommunicationTime = in.readString();
         landmark = in.readString();
         is_renting = in.readByte() != 0;
+        distance = in.readDouble();
     }
 
     public static final Creator<Station> CREATOR = new Creator<Station>() {
@@ -97,7 +101,12 @@ public class Station implements Parcelable {
         parcel.writeString(lastCommunicationTime);
         parcel.writeString(landmark);
         parcel.writeByte((byte) (is_renting ? 1 : 0));
+        parcel.writeDouble(distance);
     }
+
+    //endregion
+
+    //region Getters
 
     public String getStationName() {
         return stationName;
@@ -114,4 +123,41 @@ public class Station implements Parcelable {
     public String getLastCommunicationTime() {
         return lastCommunicationTime;
     }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    //endregion
+
+    //region Setters
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
+    //endregion
+
+    // Comparable<Station> methods
+
+    /**
+     * Compares two Stations by their distance, the closer Station should be sorted before the
+     * further away Station
+     *
+     * @param o the Station to compare this Station to
+     * @return -1, 0, or 1 as this object is less than, equal to, or greater than the specified object.
+     */
+    @Override
+    public int compareTo(Station o) {
+        if (distance > o.distance) {
+            return 1;
+        } else if (distance < o.distance) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    //endregion
+
 }

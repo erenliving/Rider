@@ -1,17 +1,25 @@
 package com.erenlivingstone.rider.appscreens.bikes;
 
 import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.os.ResultReceiver;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.erenlivingstone.rider.R;
+import com.erenlivingstone.rider.constants.Constants;
 import com.erenlivingstone.rider.data.model.Station;
+import com.erenlivingstone.rider.services.FetchAddressIntentService;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * A {@link Fragment} subclass containing a CardView with
@@ -108,6 +116,17 @@ public class BikesFragment extends Fragment implements BikesContract.View {
     }
 
     @Override
+    public void startFetchAddress(BikesPresenter.AddressResultReceiver resultReceiver, LatLng location) {
+        Location locationExtra = new Location(LocationManager.PASSIVE_PROVIDER);
+        locationExtra.setLatitude(location.latitude);
+        locationExtra.setLongitude(location.longitude);
+
+        // Convert the Station location to an address for display
+        FetchAddressIntentService.startActionFetchAddress(getContext(), resultReceiver,
+                locationExtra);
+    }
+
+    @Override
     public void showStationCard(String stationName, String availableBikes, String distance,
                                 String location, String lastCommunicationTime) {
         mStationNameTextView.setText(stationName);
@@ -117,5 +136,16 @@ public class BikesFragment extends Fragment implements BikesContract.View {
         mLastCommunicationTimeTextView.setText("Last communicated: " + lastCommunicationTime);
     }
 
+    @Override
+    public void setStationAddressText(String address) {
+        mLocationTextView.setText(address);
+    }
+
+    @Override
+    public void showAddressSuccessToast() {
+        Toast.makeText(getContext(), getString(R.string.address_found), Toast.LENGTH_SHORT).show();
+    }
+
     //endregion
+
 }

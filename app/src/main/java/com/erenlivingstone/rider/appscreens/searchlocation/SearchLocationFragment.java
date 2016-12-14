@@ -1,14 +1,9 @@
-package com.erenlivingstone.rider.appscreens.location;
+package com.erenlivingstone.rider.appscreens.searchlocation;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -20,12 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.erenlivingstone.rider.R;
 import com.erenlivingstone.rider.constants.LocationMode;
+import com.erenlivingstone.rider.constants.SearchMode;
+import com.erenlivingstone.rider.data.model.Stations;
 import com.erenlivingstone.rider.services.UtilityService;
 import com.erenlivingstone.rider.utils.Utils;
-import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -33,52 +30,68 @@ import com.google.android.gms.maps.model.LatLng;
  * to give a location to use when searching.
  *
  * Activities that contain this fragment must implement the
- * {@link LocationFragment.OnLocationFragmentInteractionListener} interface
+ * {@link SearchLocationFragment.OnSearchLocationFragmentInteractionListener} interface
  * to handle interaction events.
  *
- * Use the {@link LocationFragment#newInstance} factory method to
+ * Use the {@link SearchLocationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LocationFragment extends Fragment implements LocationContract.View {
+public class SearchLocationFragment extends Fragment implements SearchLocationContract.View {
 
-    public static final String TAG = LocationFragment.class.getSimpleName();
+    public static final String TAG = SearchLocationFragment.class.getSimpleName();
 
-    private LocationContract.Presenter mPresenter;
+    private SearchLocationContract.Presenter mPresenter;
 
-    public interface OnLocationFragmentInteractionListener {
-        void onLocationFound(LatLng location);
+    public interface OnSearchLocationFragmentInteractionListener {
+        void onSearchReady(SearchMode searchMode, LatLng location, Stations stations);
     }
 
-    private OnLocationFragmentInteractionListener mListener;
+    private OnSearchLocationFragmentInteractionListener mListener;
 
     private static final int PERMISSION_REQUEST_CODE = 0;
 
-    private Button myLocationButton, enterLocationButton;
+    private TextView locationLabelTextView;
+    private Button rideButton, dockButton, myLocationButton, enterLocationButton;
     private ProgressBar indeterminateProgressBar;
 
-    public LocationFragment() {
+    public SearchLocationFragment() {
         // Required empty public constructor
     }
 
-    public static LocationFragment newInstance() {
-        return new LocationFragment();
+    public static SearchLocationFragment newInstance() {
+        return new SearchLocationFragment();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_location, container, false);
+        return inflater.inflate(R.layout.fragment_search_location, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        locationLabelTextView = (TextView) view.findViewById(R.id.location_label_text_view);
+        rideButton = (Button) view.findViewById(R.id.ride_button);
+        rideButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.onSearchModeButtonPressed(SearchMode.BIKES);
+            }
+        });
+        dockButton = (Button) view.findViewById(R.id.dock_button);
+        dockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.onSearchModeButtonPressed(SearchMode.PARKING);
+            }
+        });
         myLocationButton = (Button) view.findViewById(R.id.my_location_button);
         myLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.onLocationButtonPressed(LocationMode.DEVICE, getActivity());
+                mPresenter.onLocationButtonPressed(LocationMode.DEVICE);
             }
         });
 
@@ -86,7 +99,7 @@ public class LocationFragment extends Fragment implements LocationContract.View 
         enterLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.onLocationButtonPressed(LocationMode.CUSTOM, getActivity());
+                mPresenter.onLocationButtonPressed(LocationMode.CUSTOM);
             }
         });
 
@@ -96,11 +109,11 @@ public class LocationFragment extends Fragment implements LocationContract.View 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnLocationFragmentInteractionListener) {
-            mListener = (OnLocationFragmentInteractionListener) context;
+        if (context instanceof OnSearchLocationFragmentInteractionListener) {
+            mListener = (OnSearchLocationFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnLocationFragmentInteractionListener");
+                    + " must implement OnSearchLocationFragmentInteractionListener");
         }
     }
 
@@ -109,7 +122,7 @@ public class LocationFragment extends Fragment implements LocationContract.View 
         super.onResume();
         // Forward broadcasts to the Presenter
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
-                ((LocationPresenter) mPresenter).locationBroadcastReceiver, UtilityService
+                ((SearchLocationPresenter) mPresenter).locationBroadcastReceiver, UtilityService
                         .getLocationUpdatedIntentFilter());
     }
 
@@ -118,7 +131,7 @@ public class LocationFragment extends Fragment implements LocationContract.View 
         super.onPause();
         // Unregister broadcasts to the Presenter
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(
-                ((LocationPresenter)mPresenter).locationBroadcastReceiver);
+                ((SearchLocationPresenter)mPresenter).locationBroadcastReceiver);
     }
 
     @Override
@@ -138,7 +151,7 @@ public class LocationFragment extends Fragment implements LocationContract.View 
         switch (requestCode) {
             case PERMISSION_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mPresenter.fineLocationPermissionGranted(getActivity());
+                    mPresenter.fineLocationPermissionGranted();
                 }
                 break;
         }
@@ -146,11 +159,17 @@ public class LocationFragment extends Fragment implements LocationContract.View 
 
     //endregion
 
-    //region LocationContract.View methods
+    //region SearchLocationContract.View methods
 
     @Override
-    public void setPresenter(LocationContract.Presenter presenter) {
+    public void setPresenter(SearchLocationContract.Presenter presenter) {
         mPresenter = presenter;
+    }
+
+    @Override
+    public void enableLocationButtons() {
+        myLocationButton.setEnabled(true);
+        enterLocationButton.setEnabled(true);
     }
 
     /**
@@ -169,6 +188,27 @@ public class LocationFragment extends Fragment implements LocationContract.View 
             enterLocationButton.setVisibility(View.VISIBLE);
             indeterminateProgressBar.setVisibility(View.GONE);
         }
+    }
+
+    /**
+     * Calls the Utils to check Fine Location permission
+     *
+     * @return true if permission granted, false otherwise
+     */
+    @Override
+    public boolean checkFineLocationPermission() {
+        return Utils.checkFineLocationPermission(getContext());
+    }
+
+    /**
+     * Checks if user denied Fine Location permission in the past
+     *
+     * @return true if user denied permission in the past, false otherwise
+     */
+    @Override
+    public boolean shouldShowPermissionRationale() {
+        return ActivityCompat.shouldShowRequestPermissionRationale(
+                getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
     /**
@@ -199,14 +239,24 @@ public class LocationFragment extends Fragment implements LocationContract.View 
     }
 
     /**
-     * Communicates that the device has found its Location to the Activity
-     *
-     * @param location the location coordinates of the device
+     * Starts the Service to get the device's Location and broadcast it back
      */
     @Override
-    public void onLocationFound(LatLng location) {
+    public void startRequestLocationService() {
+        UtilityService.requestLocation(getContext());
+    }
+
+    /**
+     * Communicates that the device has found its Location, and loaded Stations info to the Activity
+     *
+     * @param searchMode the selected SearchMode value
+     * @param location the location coordinates of the device
+     * @param stations the collection of Station info
+     */
+    @Override
+    public void onSearchReady(SearchMode searchMode, LatLng location, Stations stations) {
         if (mListener != null) {
-            mListener.onLocationFound(location);
+            mListener.onSearchReady(searchMode, location, stations);
         }
     }
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.erenlivingstone.rider.appscreens.MainActivity">
+    tools:context="com.erenlivingstone.rider.appscreens.searchlocation.SearchLocationActivity">
 
     <FrameLayout
         android:id="@+id/main_container"

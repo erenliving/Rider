@@ -1,7 +1,16 @@
 package com.erenlivingstone.rider.appscreens.bikes;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
+import android.widget.Toast;
+
+import com.erenlivingstone.rider.R;
+import com.erenlivingstone.rider.constants.Constants;
 import com.erenlivingstone.rider.data.model.Station;
 import com.erenlivingstone.rider.data.model.Stations;
+import com.erenlivingstone.rider.services.FetchAddressIntentService;
 import com.erenlivingstone.rider.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
@@ -14,6 +23,8 @@ public class BikesPresenter implements BikesContract.Presenter {
 
     private final BikesContract.View mBikesView;
 
+    private AddressResultReceiver mResultReceiver;
+
     private LatLng mLocation;
     private Stations mStations;
     private Station mCurrentStation;
@@ -23,6 +34,7 @@ public class BikesPresenter implements BikesContract.Presenter {
     public BikesPresenter(BikesContract.View bikesView, LatLng location, Stations stations) {
         mBikesView = bikesView;
         mBikesView.setPresenter(this);
+        mResultReceiver = new AddressResultReceiver(new Handler());
         mLocation = location;
         mStations = stations;
     }
@@ -36,7 +48,7 @@ public class BikesPresenter implements BikesContract.Presenter {
         // TODO: display a loading indicator
 
         if (mFirstLoad) {
-            mCurrentStation = findClosestStation(mLocation, mStations);
+            mCurrentStation = mStations.stationBeanList.get(0);
             mFirstLoad = false;
         }
         // TODO: Do I need an additional case here if mCurrentStation is null? When would it become null?
@@ -46,32 +58,11 @@ public class BikesPresenter implements BikesContract.Presenter {
         String lastCommunicationTime = Utils.getFormattedTimestampForDisplay(
                 mCurrentStation.getLastCommunicationTime());
 
+        mBikesView.startFetchAddress(mResultReceiver, mCurrentStation.getLocation());
+
         mBikesView.showStationCard(mCurrentStation.getStationName(),
                 String.valueOf(mCurrentStation.getAvailableBikes()), distance,
                 mCurrentStation.getLocation().toString(), lastCommunicationTime);
-    }
-
-    /**
-     * Loops through each Station in the given collection, calculating the spherical distance
-     * between its location and the given location, searching for the closest one.
-     *
-     * @param location the location of the device or user-entered location
-     * @param stations the collection of Stations to search through
-     * @return the closest Station
-     */
-    private Station findClosestStation(LatLng location, Stations stations) {
-        Station closestStation = null;
-        double closestDistance = Double.MAX_VALUE;
-
-        for (Station station : stations.stationBeanList) {
-            double distance = SphericalUtil.computeDistanceBetween(location, station.getLocation());
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestStation = station;
-            }
-        }
-
-        return closestStation;
     }
 
     @Override
@@ -83,4 +74,26 @@ public class BikesPresenter implements BikesContract.Presenter {
     public void onRejectCardSwipe() {
         // TODO: complete this method
     }
+
+    public class AddressResultReceiver extends ResultReceiver {
+
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            // Display the address string
+            // or an error message sent from the intent service.
+            String address = resultData.getString(Constants.RESULT_DATA_KEY);
+            mBikesView.setStationAddressText(address);
+
+            // Show a toast message if an address was found.
+            if (resultCode == Constants.SUCCESS_RESULT) {
+                mBikesView.showAddressSuccessToast();
+            }
+        }
+
+    }
+
 }

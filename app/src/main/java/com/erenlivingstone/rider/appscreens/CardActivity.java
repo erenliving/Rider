@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.erenlivingstone.rider.R;
 import com.erenlivingstone.rider.appscreens.bikes.BikesFragment;
 import com.erenlivingstone.rider.appscreens.bikes.BikesPresenter;
+import com.erenlivingstone.rider.appscreens.searchlocation.SearchLocationActivity;
 import com.erenlivingstone.rider.constants.SearchMode;
 import com.erenlivingstone.rider.data.model.Stations;
 import com.google.android.gms.maps.model.LatLng;
@@ -24,9 +25,9 @@ public class CardActivity extends AppCompatActivity
         setContentView(R.layout.activity_card);
 
         Intent intent = getIntent();
-        searchMode = (SearchMode) intent.getSerializableExtra(MainActivity.EXTRA_SEARCH_MODE);
-        location = intent.getParcelableExtra(MainActivity.EXTRA_LOCATION);
-        stations.stationBeanList = intent.getParcelableArrayListExtra(MainActivity.EXTRA_STATIONS);
+        searchMode = (SearchMode) intent.getSerializableExtra(SearchLocationActivity.EXTRA_SEARCH_MODE);
+        location = intent.getParcelableExtra(SearchLocationActivity.EXTRA_LOCATION);
+        stations.stationBeanList = intent.getParcelableArrayListExtra(SearchLocationActivity.EXTRA_STATIONS);
 
         BikesFragment bikesFragment = (BikesFragment) getSupportFragmentManager().findFragmentById(R.id.container);
         if (bikesFragment == null) {
