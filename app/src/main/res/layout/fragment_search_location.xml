@@ -1,8 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.erenlivingstone.rider.appscreens.searchlocation.SearchLocationFragment">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.erenlivingstone.rider.appscreens.searchlocation.SearchLocationFragment">
 
     <Button
         android:id="@+id/ride_button"
@@ -11,7 +11,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="64dp"
-        android:text="I want to ride!" />
+        android:text="I want to ride!"/>
 
     <Button
         android:id="@+id/dock_button"
@@ -19,14 +19,14 @@
         android:layout_height="36dp"
         android:layout_below="@id/ride_button"
         android:layout_centerHorizontal="true"
-        android:text="I want to dock!" />
+        android:text="I want to dock!"/>
 
     <TextView
         android:id="@+id/location_label_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Using:" />
+        android:text="Using:"/>
 
     <Button
         android:id="@+id/my_location_button"
@@ -36,7 +36,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="27dp"
         android:enabled="false"
-        android:text="My location" />
+        android:text="My location"/>
 
     <Button
         android:id="@+id/enter_location_button"
@@ -45,7 +45,7 @@
         android:layout_below="@id/my_location_button"
         android:layout_centerHorizontal="true"
         android:enabled="false"
-        android:text="Enter a location" />
+        android:text="Enter a location"/>
 
     <ProgressBar
         android:id="@+id/indeterminate_progress_bar"
@@ -54,6 +54,16 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:theme="@style/CircularProgress"
-        android:visibility="gone" />
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/loading_status_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/indeterminate_progress_bar"
+        android:layout_centerInParent="true"
+        android:text="Loading Stations"
+        android:textAlignment="center"
+        android:visibility="gone"/>
 
 </RelativeLayout>

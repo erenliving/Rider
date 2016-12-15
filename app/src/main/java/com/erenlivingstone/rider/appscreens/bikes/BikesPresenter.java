@@ -1,29 +1,29 @@
 package com.erenlivingstone.rider.appscreens.bikes;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.widget.Toast;
 
-import com.erenlivingstone.rider.R;
+import com.daprlabs.aaron.swipedeck.SwipeDeck;
+import com.erenlivingstone.rider.appscreens.card.SwipeDeckAdapter;
 import com.erenlivingstone.rider.constants.Constants;
 import com.erenlivingstone.rider.data.model.Station;
 import com.erenlivingstone.rider.data.model.Stations;
-import com.erenlivingstone.rider.services.FetchAddressIntentService;
 import com.erenlivingstone.rider.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
 
 /**
  * Created by Eren on 10/12/2016.
  */
 
-public class BikesPresenter implements BikesContract.Presenter {
+public class BikesPresenter implements BikesContract.Presenter,
+        SwipeDeck.SwipeDeckCallback {
 
     private final BikesContract.View mBikesView;
 
     private AddressResultReceiver mResultReceiver;
+
+    private SwipeDeckAdapter mSwipeDeckAdapter;
 
     private LatLng mLocation;
     private Stations mStations;
@@ -31,10 +31,12 @@ public class BikesPresenter implements BikesContract.Presenter {
 
     private boolean mFirstLoad = true;
 
-    public BikesPresenter(BikesContract.View bikesView, LatLng location, Stations stations) {
+    public BikesPresenter(BikesContract.View bikesView, SwipeDeckAdapter swipeDeckAdapter, LatLng
+            location, Stations stations) {
         mBikesView = bikesView;
         mBikesView.setPresenter(this);
         mResultReceiver = new AddressResultReceiver(new Handler());
+        mSwipeDeckAdapter = swipeDeckAdapter;
         mLocation = location;
         mStations = stations;
     }
@@ -63,6 +65,11 @@ public class BikesPresenter implements BikesContract.Presenter {
         mBikesView.showStationCard(mCurrentStation.getStationName(),
                 String.valueOf(mCurrentStation.getAvailableBikes()), distance,
                 mCurrentStation.getLocation().toString(), lastCommunicationTime);
+    }
+
+    @Override
+    public SwipeDeckAdapter getSwipeDeckAdapter() {
+        return mSwipeDeckAdapter;
     }
 
     @Override
@@ -95,5 +102,19 @@ public class BikesPresenter implements BikesContract.Presenter {
         }
 
     }
+
+    //region SwipeDeckCallback methods
+
+    @Override
+    public void cardSwipedLeft(long stableId) {
+        // TODO: complete this method
+    }
+
+    @Override
+    public void cardSwipedRight(long stableId) {
+        // TODO: complete this method
+    }
+
+    //endregion
 
 }

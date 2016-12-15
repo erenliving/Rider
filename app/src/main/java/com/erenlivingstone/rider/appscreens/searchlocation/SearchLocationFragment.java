@@ -50,7 +50,7 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
 
     private static final int PERMISSION_REQUEST_CODE = 0;
 
-    private TextView locationLabelTextView;
+    private TextView locationLabelTextView, loadingStatusTextView;
     private Button rideButton, dockButton, myLocationButton, enterLocationButton;
     private ProgressBar indeterminateProgressBar;
 
@@ -73,6 +73,7 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         locationLabelTextView = (TextView) view.findViewById(R.id.location_label_text_view);
+        loadingStatusTextView = (TextView) view.findViewById(R.id.loading_status_text_view);
         rideButton = (Button) view.findViewById(R.id.ride_button);
         rideButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,13 +181,21 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
     @Override
     public void setLoadingIndicator(boolean active) {
         if (active) {
+            rideButton.setVisibility(View.GONE);
+            dockButton.setVisibility(View.GONE);
+            locationLabelTextView.setVisibility(View.GONE);
             myLocationButton.setVisibility(View.GONE);
             enterLocationButton.setVisibility(View.GONE);
             indeterminateProgressBar.setVisibility(View.VISIBLE);
+            loadingStatusTextView.setVisibility(View.VISIBLE);
         } else {
+            rideButton.setVisibility(View.VISIBLE);
+            dockButton.setVisibility(View.VISIBLE);
+            locationLabelTextView.setVisibility(View.VISIBLE);
             myLocationButton.setVisibility(View.VISIBLE);
             enterLocationButton.setVisibility(View.VISIBLE);
             indeterminateProgressBar.setVisibility(View.GONE);
+            loadingStatusTextView.setVisibility(View.GONE);
         }
     }
 

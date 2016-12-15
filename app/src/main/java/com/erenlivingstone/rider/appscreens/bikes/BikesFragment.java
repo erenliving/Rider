@@ -4,20 +4,15 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.os.ResultReceiver;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.erenlivingstone.rider.R;
-import com.erenlivingstone.rider.constants.Constants;
-import com.erenlivingstone.rider.data.model.Station;
 import com.erenlivingstone.rider.services.FetchAddressIntentService;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -44,9 +39,7 @@ public class BikesFragment extends Fragment implements BikesContract.View {
 
     private OnBikesFragmentInteractionListener mListener;
 
-    private CardView mCardView;
-    private TextView mStationNameTextView, mAvailableBikesTextView, mDistanceTextView,
-            mLocationTextView, mLastCommunicationTimeTextView;
+    private SwipeDeck mSwipeDeck;
 
     public BikesFragment() {
         // Required empty public constructor
@@ -71,12 +64,11 @@ public class BikesFragment extends Fragment implements BikesContract.View {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mCardView = (CardView) view.findViewById(R.id.card_view);
-        mStationNameTextView = (TextView) view.findViewById(R.id.station_name_text_view);
-        mAvailableBikesTextView = (TextView) view.findViewById(R.id.available_bikes_text_view);
-        mDistanceTextView = (TextView) view.findViewById(R.id.distance_text_view);
-        mLocationTextView = (TextView) view.findViewById(R.id.location_text_view);
-        mLastCommunicationTimeTextView = (TextView) view.findViewById(R.id.last_communication_time_text_view);
+        mSwipeDeck = (SwipeDeck) view.findViewById(R.id.swipe_deck);
+        // Let the Presenter handle configuring SwipeDeck views
+        mSwipeDeck.setAdapter(mPresenter.getSwipeDeckAdapter());
+        // Forward events to Presenter
+        mSwipeDeck.setCallback((BikesPresenter)mPresenter);
     }
 
     @Override
@@ -102,12 +94,6 @@ public class BikesFragment extends Fragment implements BikesContract.View {
         mListener = null;
     }
 
-    public void onCardSwipe(boolean toRight) {
-        if (mListener != null) {
-            mListener.onBikesFragmentInteraction(false);
-        }
-    }
-
     //region BikesContract.View methods
 
     @Override
@@ -129,16 +115,16 @@ public class BikesFragment extends Fragment implements BikesContract.View {
     @Override
     public void showStationCard(String stationName, String availableBikes, String distance,
                                 String location, String lastCommunicationTime) {
-        mStationNameTextView.setText(stationName);
-        mAvailableBikesTextView.setText(availableBikes + " available bikes");
-        mDistanceTextView.setText(distance);
-        mLocationTextView.setText(location);
-        mLastCommunicationTimeTextView.setText("Last communicated: " + lastCommunicationTime);
+//        mStationNameTextView.setText(stationName);
+//        mAvailableBikesTextView.setText(availableBikes + " available bikes");
+//        mDistanceTextView.setText(distance);
+//        mLocationTextView.setText(location);
+//        mLastCommunicationTimeTextView.setText("Last communicated: " + lastCommunicationTime);
     }
 
     @Override
     public void setStationAddressText(String address) {
-        mLocationTextView.setText(address);
+//        mLocationTextView.setText(address);
     }
 
     @Override

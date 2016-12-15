@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.erenlivingstone.rider.R;
 import com.erenlivingstone.rider.appscreens.bikes.BikesFragment;
 import com.erenlivingstone.rider.appscreens.bikes.BikesPresenter;
+import com.erenlivingstone.rider.appscreens.card.SwipeDeckAdapter;
 import com.erenlivingstone.rider.appscreens.searchlocation.SearchLocationActivity;
 import com.erenlivingstone.rider.constants.SearchMode;
 import com.erenlivingstone.rider.data.model.Stations;
@@ -37,8 +38,15 @@ public class CardActivity extends AppCompatActivity
                     .add(R.id.container, bikesFragment, BikesFragment.TAG)
                     .commit();
 
+            // Construct the SwipeDeckAdapter here so it has a Context (to keep it hidden from
+            // Presenter layer) and inject it into the Presenter
+            // TODO: double check this isn't anti-pattern and ends up leaking the Activity anyways
+            SwipeDeckAdapter swipeDeckAdapter = new SwipeDeckAdapter(stations.stationBeanList,
+                    this);
+
             // Initialize the Presenter, it hooks itself to the View during construction
-            BikesPresenter bikesPresenter = new BikesPresenter(bikesFragment, location, stations);
+            BikesPresenter bikesPresenter = new BikesPresenter(bikesFragment, swipeDeckAdapter,
+                    location, stations);
         }
 
         if (savedInstanceState != null) {

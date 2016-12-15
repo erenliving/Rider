@@ -1,102 +1,21 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.erenlivingstone.rider.appscreens.bikes.BikesFragment">
+<com.daprlabs.aaron.swipedeck.layouts.SwipeLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                        xmlns:swipedeck="http://schemas.android.com/apk/res-auto"
+                                                        xmlns:tools="http://schemas.android.com/tools"
+                                                        android:id="@+id/swipeLayout"
+                                                        android:layout_width="match_parent"
+                                                        android:layout_height="match_parent"
+                                                        android:orientation="vertical"
+                                                        tools:context="com.erenlivingstone.rider.appscreens.bikes.BikesFragment">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/card_view"
+    <com.daprlabs.aaron.swipedeck.SwipeDeck
+        android:id="@+id/swipe_deck"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="100dp"
-        card_view:cardBackgroundColor="@color/colorPrimary"
-        card_view:cardCornerRadius="8dp">
+        android:paddingBottom="32dp"
+        android:paddingEnd="32dp"
+        android:paddingStart="32dp"
+        android:paddingTop="32dp"
+        swipedeck:card_spacing="8dp"
+        swipedeck:max_visible="5"/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/station_name_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:maxLines="1"
-                android:paddingTop="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:text="St George St / Bloor St W"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
-
-            <ImageView
-                android:id="@+id/thumbnail_image_view"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:layout_below="@id/station_name_text_view"
-                android:layout_margin="16dp"
-                android:background="@android:color/white"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/bike1" />
-
-            <TextView
-                android:id="@+id/available_bikes_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/thumbnail_image_view"
-                android:paddingBottom="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:text="15 available bikes"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/distance_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/available_bikes_text_view"
-                android:maxLines="1"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:text="5min walk (500m)"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"/>
-
-            <TextView
-                android:id="@+id/location_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/distance_text_view"
-                android:maxLines="1"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:text="123 Bloor St W, Toronto, ON"
-                android:textColor="@android:color/white"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/last_communication_time_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/location_text_view"
-                android:maxLines="3"
-                android:padding="8dp"
-                android:text="Last Updated: 2016-12-01 12:34pm EST"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
-
-        </RelativeLayout>
-
-    </android.support.v7.widget.CardView>
-
-</LinearLayout>
+</com.daprlabs.aaron.swipedeck.layouts.SwipeLinearLayout>

@@ -2,7 +2,7 @@ package com.erenlivingstone.rider.appscreens.bikes;
 
 import com.erenlivingstone.rider.appscreens.BasePresenter;
 import com.erenlivingstone.rider.appscreens.BaseView;
-import com.erenlivingstone.rider.data.model.Station;
+import com.erenlivingstone.rider.appscreens.card.SwipeDeckAdapter;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -25,6 +25,8 @@ public interface BikesContract {
     }
 
     interface Presenter extends BasePresenter {
+
+        SwipeDeckAdapter getSwipeDeckAdapter();
 
         void onAcceptCardSwipe();
 

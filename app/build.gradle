@@ -48,4 +48,7 @@ dependencies {
     // Square's Retrofit 2 HTTP library
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+
+    // SwipeDeck2 library - Tinder style card swipe animation
+    compile 'com.daprlabs.aaron:swipedeck:2.0.6'
 }
