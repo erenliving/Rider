@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.erenlivingstone.rider.R;
 import com.erenlivingstone.rider.data.model.Station;
+import com.erenlivingstone.rider.utils.Utils;
 
 import java.util.List;
 
@@ -21,10 +22,6 @@ public class SwipeDeckAdapter extends BaseAdapter {
 
     private List<Station> data;
     private Context context;
-
-//    private CardView mCardView;
-//    private TextView mStationNameTextView, mAvailableBikesTextView, mDistanceTextView,
-//            mLocationTextView, mLastCommunicationTimeTextView;
 
     public SwipeDeckAdapter(List<Station> data, Context context) {
         this.data = data;
@@ -55,20 +52,18 @@ public class SwipeDeckAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.card_bikes, parent, false);
         }
 
-//        CardView mCardView = (CardView) view.findViewById(R.id.card_view);
         TextView mStationNameTextView = (TextView) view.findViewById(R.id.station_name_text_view);
         TextView mAvailableBikesTextView = (TextView) view.findViewById(R.id.available_bikes_text_view);
         TextView mDistanceTextView = (TextView) view.findViewById(R.id.distance_text_view);
-        TextView mLocationTextView = (TextView) view.findViewById(R.id.location_text_view);
-        TextView mLastCommunicationTimeTextView = (TextView) view.findViewById(R.id.last_communication_time_text_view);
+        TextView mLastUpdatedTextView = (TextView) view.findViewById(R.id.last_updated_text_view);
 
         Station station = data.get(position);
 
         mStationNameTextView.setText(station.getStationName());
         mAvailableBikesTextView.setText(station.getAvailableBikes() + " available bikes");
-        mDistanceTextView.setText(String.valueOf(station.getDistance()));
-        mLocationTextView.setText(station.getLocation().toString());
-        mLastCommunicationTimeTextView.setText("Last communicated: " + station.getLastCommunicationTime());
+        mDistanceTextView.setText(String.valueOf(Utils.getFormattedDistanceForDisplay(station
+                .getDistance())));
+        mLastUpdatedTextView.setText("Last updated: " + station.getLastUpdated());
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override

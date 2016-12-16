@@ -1,20 +1,17 @@
 package com.erenlivingstone.rider.appscreens.bikes;
 
 import android.content.Context;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.erenlivingstone.rider.R;
-import com.erenlivingstone.rider.services.FetchAddressIntentService;
-import com.google.android.gms.maps.model.LatLng;
 
 /**
  * A {@link Fragment} subclass containing a CardView with
@@ -40,6 +37,7 @@ public class BikesFragment extends Fragment implements BikesContract.View {
     private OnBikesFragmentInteractionListener mListener;
 
     private SwipeDeck mSwipeDeck;
+    private ProgressBar mIndeterminateProgressBar;
 
     public BikesFragment() {
         // Required empty public constructor
@@ -69,6 +67,7 @@ public class BikesFragment extends Fragment implements BikesContract.View {
         mSwipeDeck.setAdapter(mPresenter.getSwipeDeckAdapter());
         // Forward events to Presenter
         mSwipeDeck.setCallback((BikesPresenter)mPresenter);
+        mIndeterminateProgressBar = (ProgressBar) view.findViewById(R.id.indeterminate_progress_bar);
     }
 
     @Override
@@ -101,35 +100,25 @@ public class BikesFragment extends Fragment implements BikesContract.View {
         mPresenter = presenter;
     }
 
+    /**
+     * Method to display or hide the indeterminate progress bar indicating loading first Station
+     *
+     * @param active true to display indicator, false to hide indicator
+     */
     @Override
-    public void startFetchAddress(BikesPresenter.AddressResultReceiver resultReceiver, LatLng location) {
-        Location locationExtra = new Location(LocationManager.PASSIVE_PROVIDER);
-        locationExtra.setLatitude(location.latitude);
-        locationExtra.setLongitude(location.longitude);
-
-        // Convert the Station location to an address for display
-        FetchAddressIntentService.startActionFetchAddress(getContext(), resultReceiver,
-                locationExtra);
+    public void setLoadingIndicator(boolean active) {
+        if (active) {
+            mSwipeDeck.setVisibility(View.GONE);
+            mIndeterminateProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mSwipeDeck.setVisibility(View.VISIBLE);
+            mIndeterminateProgressBar.setVisibility(View.GONE);
+        }
     }
 
     @Override
-    public void showStationCard(String stationName, String availableBikes, String distance,
-                                String location, String lastCommunicationTime) {
-//        mStationNameTextView.setText(stationName);
-//        mAvailableBikesTextView.setText(availableBikes + " available bikes");
-//        mDistanceTextView.setText(distance);
-//        mLocationTextView.setText(location);
-//        mLastCommunicationTimeTextView.setText("Last communicated: " + lastCommunicationTime);
-    }
-
-    @Override
-    public void setStationAddressText(String address) {
-//        mLocationTextView.setText(address);
-    }
-
-    @Override
-    public void showAddressSuccessToast() {
-        Toast.makeText(getContext(), getString(R.string.address_found), Toast.LENGTH_SHORT).show();
+    public void showToast(String text) {
+        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 
     //endregion

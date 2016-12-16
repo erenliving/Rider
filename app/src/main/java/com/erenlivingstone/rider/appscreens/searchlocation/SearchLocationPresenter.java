@@ -8,14 +8,10 @@ import android.util.Log;
 
 import com.erenlivingstone.rider.constants.LocationMode;
 import com.erenlivingstone.rider.constants.SearchMode;
-import com.erenlivingstone.rider.data.model.Station;
 import com.erenlivingstone.rider.data.model.Stations;
 import com.erenlivingstone.rider.networking.BikeShareTorontoAPI;
 import com.erenlivingstone.rider.services.UtilityService;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
-
-import java.util.Collections;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -129,13 +125,6 @@ public class SearchLocationPresenter implements SearchLocationContract.Presenter
      */
     @Override
     public void onResponse(Call<Stations> call, Response<Stations> response) {
-        calculateStationDistances(mLocation, response.body());
-        // Sort Stations by closest distance
-        Collections.sort(response.body().stationBeanList);
-        // TODO: lookup Stations addresses
-
-        mSearchLocationView.setLoadingIndicator(false);
-
         mSearchLocationView.onSearchReady(mSearchMode, mLocation, response.body());
     }
 
@@ -153,11 +142,5 @@ public class SearchLocationPresenter implements SearchLocationContract.Presenter
     }
 
     //endregion
-
-    private void calculateStationDistances(LatLng location, Stations stations) {
-        for (Station station : stations.stationBeanList) {
-            station.setDistance(SphericalUtil.computeDistanceBetween(location, station.getLocation()));
-        }
-    }
 
 }

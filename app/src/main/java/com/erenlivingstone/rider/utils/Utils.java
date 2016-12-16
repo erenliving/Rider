@@ -11,9 +11,7 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -89,5 +87,20 @@ public class Utils {
         }
 
         return formattedTimestamp;
+    }
+
+    /**
+     * Transforms the input double into a String ready for display in the UI, with automatic
+     * formatting to show kilometer distances
+     *
+     * @param distance the distance in meters
+     * @return the String representation of the distance in meters or kilometers
+     */
+    public static String getFormattedDistanceForDisplay(double distance) {
+        if (distance >= 1000) {
+            return String.format(Locale.getDefault(), "%.2fkm away", distance/1000);
+        } else {
+            return String.format(Locale.getDefault(), "%.0fm away", distance);
+        }
     }
 }

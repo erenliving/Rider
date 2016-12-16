@@ -1,16 +1,17 @@
-<com.daprlabs.aaron.swipedeck.layouts.SwipeLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.daprlabs.aaron.swipedeck.layouts.SwipeRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
                                                         xmlns:swipedeck="http://schemas.android.com/apk/res-auto"
                                                         xmlns:tools="http://schemas.android.com/tools"
                                                         android:id="@+id/swipeLayout"
                                                         android:layout_width="match_parent"
                                                         android:layout_height="match_parent"
-                                                        android:orientation="vertical"
                                                         tools:context="com.erenlivingstone.rider.appscreens.bikes.BikesFragment">
 
     <com.daprlabs.aaron.swipedeck.SwipeDeck
         android:id="@+id/swipe_deck"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:paddingBottom="32dp"
         android:paddingEnd="32dp"
         android:paddingStart="32dp"
@@ -18,4 +19,13 @@
         swipedeck:card_spacing="8dp"
         swipedeck:max_visible="5"/>
 
-</com.daprlabs.aaron.swipedeck.layouts.SwipeLinearLayout>
+    <ProgressBar
+        android:id="@+id/indeterminate_progress_bar"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:theme="@style/CircularProgress"
+        android:visibility="gone"/>
+
+</com.daprlabs.aaron.swipedeck.layouts.SwipeRelativeLayout>

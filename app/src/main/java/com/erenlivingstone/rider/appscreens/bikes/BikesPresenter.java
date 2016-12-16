@@ -1,16 +1,14 @@
 package com.erenlivingstone.rider.appscreens.bikes;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
-
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.erenlivingstone.rider.appscreens.card.SwipeDeckAdapter;
-import com.erenlivingstone.rider.constants.Constants;
 import com.erenlivingstone.rider.data.model.Station;
 import com.erenlivingstone.rider.data.model.Stations;
 import com.erenlivingstone.rider.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
+
+import java.util.Collections;
 
 /**
  * Created by Eren on 10/12/2016.
@@ -20,8 +18,6 @@ public class BikesPresenter implements BikesContract.Presenter,
         SwipeDeck.SwipeDeckCallback {
 
     private final BikesContract.View mBikesView;
-
-    private AddressResultReceiver mResultReceiver;
 
     private SwipeDeckAdapter mSwipeDeckAdapter;
 
@@ -35,7 +31,6 @@ public class BikesPresenter implements BikesContract.Presenter,
             location, Stations stations) {
         mBikesView = bikesView;
         mBikesView.setPresenter(this);
-        mResultReceiver = new AddressResultReceiver(new Handler());
         mSwipeDeckAdapter = swipeDeckAdapter;
         mLocation = location;
         mStations = stations;
@@ -47,24 +42,17 @@ public class BikesPresenter implements BikesContract.Presenter,
     }
 
     private void loadStation() {
-        // TODO: display a loading indicator
+        mBikesView.setLoadingIndicator(true);
 
         if (mFirstLoad) {
-            mCurrentStation = mStations.stationBeanList.get(0);
+            calculateStationDistancesAndLastUpdated(mLocation, mStations);
+            // Sort Stations by closest distance
+            Collections.sort(mStations.stationBeanList);
             mFirstLoad = false;
         }
         // TODO: Do I need an additional case here if mCurrentStation is null? When would it become null?
 
-        String distance = "5min walk (500m)"; // TODO: calculate the actual distance
-
-        String lastCommunicationTime = Utils.getFormattedTimestampForDisplay(
-                mCurrentStation.getLastCommunicationTime());
-
-        mBikesView.startFetchAddress(mResultReceiver, mCurrentStation.getLocation());
-
-        mBikesView.showStationCard(mCurrentStation.getStationName(),
-                String.valueOf(mCurrentStation.getAvailableBikes()), distance,
-                mCurrentStation.getLocation().toString(), lastCommunicationTime);
+        mBikesView.setLoadingIndicator(false);
     }
 
     @Override
@@ -72,47 +60,23 @@ public class BikesPresenter implements BikesContract.Presenter,
         return mSwipeDeckAdapter;
     }
 
-    @Override
-    public void onAcceptCardSwipe() {
-        // TODO: complete this method
-    }
-
-    @Override
-    public void onRejectCardSwipe() {
-        // TODO: complete this method
-    }
-
-    public class AddressResultReceiver extends ResultReceiver {
-
-        public AddressResultReceiver(Handler handler) {
-            super(handler);
+    private void calculateStationDistancesAndLastUpdated(LatLng location, Stations stations) {
+        for (Station station : stations.stationBeanList) {
+            station.setDistance(SphericalUtil.computeDistanceBetween(location, station.getLocation()));
+            station.setLastUpdated(Utils.getFormattedTimestampForDisplay(station.getLastCommunicationTime()));
         }
-
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            // Display the address string
-            // or an error message sent from the intent service.
-            String address = resultData.getString(Constants.RESULT_DATA_KEY);
-            mBikesView.setStationAddressText(address);
-
-            // Show a toast message if an address was found.
-            if (resultCode == Constants.SUCCESS_RESULT) {
-                mBikesView.showAddressSuccessToast();
-            }
-        }
-
     }
 
     //region SwipeDeckCallback methods
 
     @Override
     public void cardSwipedLeft(long stableId) {
-        // TODO: complete this method
+        mBikesView.showToast("Station rejected!");
     }
 
     @Override
     public void cardSwipedRight(long stableId) {
-        // TODO: complete this method
+        mBikesView.showToast("Station matched!");
     }
 
     //endregion

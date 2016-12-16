@@ -1,8 +1,8 @@
 package com.erenlivingstone.rider.appscreens;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.erenlivingstone.rider.R;
 import com.erenlivingstone.rider.appscreens.bikes.BikesFragment;
@@ -30,23 +30,32 @@ public class CardActivity extends AppCompatActivity
         location = intent.getParcelableExtra(SearchLocationActivity.EXTRA_LOCATION);
         stations.stationBeanList = intent.getParcelableArrayListExtra(SearchLocationActivity.EXTRA_STATIONS);
 
-        BikesFragment bikesFragment = (BikesFragment) getSupportFragmentManager().findFragmentById(R.id.container);
-        if (bikesFragment == null) {
-            bikesFragment = BikesFragment.newInstance();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.container, bikesFragment, BikesFragment.TAG)
-                    .commit();
+        switch (searchMode) {
+            case BIKES:
+                BikesFragment bikesFragment = (BikesFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+                if (bikesFragment == null) {
+                    bikesFragment = BikesFragment.newInstance();
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.container, bikesFragment, BikesFragment.TAG)
+                            .commit();
 
-            // Construct the SwipeDeckAdapter here so it has a Context (to keep it hidden from
-            // Presenter layer) and inject it into the Presenter
-            // TODO: double check this isn't anti-pattern and ends up leaking the Activity anyways
-            SwipeDeckAdapter swipeDeckAdapter = new SwipeDeckAdapter(stations.stationBeanList,
-                    this);
+                    // TODO: filter the Stations list to remove stations with no available bikes
 
-            // Initialize the Presenter, it hooks itself to the View during construction
-            BikesPresenter bikesPresenter = new BikesPresenter(bikesFragment, swipeDeckAdapter,
-                    location, stations);
+                    // Construct the SwipeDeckAdapter here so it has a Context (to keep it hidden from
+                    // Presenter layer) and inject it into the Presenter
+                    // TODO: double check this isn't anti-pattern and ends up leaking the Activity anyways
+                    SwipeDeckAdapter swipeDeckAdapter = new SwipeDeckAdapter(stations.stationBeanList,
+                            this);
+
+                    // Initialize the Presenter, it hooks itself to the View during construction
+                    BikesPresenter bikesPresenter = new BikesPresenter(bikesFragment, swipeDeckAdapter,
+                            location, stations);
+                }
+                break;
+            case PARKING:
+                // TODO: complete this case
+                break;
         }
 
         if (savedInstanceState != null) {

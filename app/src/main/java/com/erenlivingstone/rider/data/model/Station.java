@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class Station implements Parcelable, Comparable<Station> {
 
+    // Properties matching JSON feed for automatic GsonConverterFactory parsing functionality
     int id;
     String stationName;
     int availableDocks;
@@ -34,7 +35,11 @@ public class Station implements Parcelable, Comparable<Station> {
     String lastCommunicationTime;
     String landmark;
     boolean is_renting;
+
+    // Custom properties
     double distance;
+    String address;
+    String lastUpdated;
 
     //region Parcelable methods
 
@@ -60,6 +65,8 @@ public class Station implements Parcelable, Comparable<Station> {
         landmark = in.readString();
         is_renting = in.readByte() != 0;
         distance = in.readDouble();
+        address = in.readString();
+        lastUpdated = in.readString();
     }
 
     public static final Creator<Station> CREATOR = new Creator<Station>() {
@@ -102,6 +109,8 @@ public class Station implements Parcelable, Comparable<Station> {
         parcel.writeString(landmark);
         parcel.writeByte((byte) (is_renting ? 1 : 0));
         parcel.writeDouble(distance);
+        parcel.writeString(address);
+        parcel.writeString(lastUpdated);
     }
 
     //endregion
@@ -128,12 +137,28 @@ public class Station implements Parcelable, Comparable<Station> {
         return distance;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public String getLastUpdated() {
+        return lastUpdated;
+    }
+
     //endregion
 
     //region Setters
 
     public void setDistance(double distance) {
         this.distance = distance;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setLastUpdated(String lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 
     //endregion

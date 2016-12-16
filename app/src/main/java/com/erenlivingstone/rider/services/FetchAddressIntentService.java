@@ -2,7 +2,6 @@ package com.erenlivingstone.rider.services;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -12,8 +11,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.erenlivingstone.rider.R;
-import com.erenlivingstone.rider.appscreens.bikes.BikesFragment;
-import com.erenlivingstone.rider.appscreens.bikes.BikesPresenter;
 import com.erenlivingstone.rider.constants.Constants;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -52,14 +49,14 @@ public class FetchAddressIntentService extends IntentService {
      *
      * @see IntentService
      */
-    public static void startActionFetchAddress(Context context, BikesPresenter
-            .AddressResultReceiver receiver, Location location) {
-        Intent intent = new Intent(context, FetchAddressIntentService.class);
-        intent.setAction(ACTION_FETCH_ADDRESS);
-        intent.putExtra(Constants.RECEIVER, receiver);
-        intent.putExtra(EXTRA_LOCATION_DATA, location);
-        context.startService(intent);
-    }
+//    public static void startActionFetchAddress(Context context, BikesPresenter
+//            .AddressResultReceiver receiver, Location location) {
+//        Intent intent = new Intent(context, FetchAddressIntentService.class);
+//        intent.setAction(ACTION_FETCH_ADDRESS);
+//        intent.putExtra(Constants.RECEIVER, receiver);
+//        intent.putExtra(EXTRA_LOCATION_DATA, location);
+//        context.startService(intent);
+//    }
 
     @Override
     protected void onHandleIntent(Intent intent) {
