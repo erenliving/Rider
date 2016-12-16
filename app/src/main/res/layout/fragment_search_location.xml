@@ -1,51 +1,86 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:context="com.erenlivingstone.rider.appscreens.searchlocation.SearchLocationFragment">
 
-    <Button
-        android:id="@+id/ride_button"
-        android:layout_width="300dp"
-        android:layout_height="36dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="64dp"
-        android:text="I want to ride!"/>
+    <View
+        android:id="@+id/middle_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@android:color/darker_gray"/>
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/dock_button"
         android:layout_width="300dp"
-        android:layout_height="36dp"
-        android:layout_below="@id/ride_button"
+        android:layout_height="56dp"
+        android:layout_above="@id/middle_divider"
         android:layout_centerHorizontal="true"
-        android:text="I want to dock!"/>
+        android:layout_marginBottom="48dp"
+        android:text="Dock!"
+        android:textColor="@android:color/white"
+        app:backgroundTint="@color/search_location_button_tint"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/ride_button"
+        android:layout_width="300dp"
+        android:layout_height="56dp"
+        android:layout_above="@id/dock_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:text="Ride!"
+        android:textColor="@android:color/white"
+        app:backgroundTint="@color/search_location_button_tint"/>
 
     <TextView
-        android:id="@+id/location_label_text_view"
+        android:id="@+id/want_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Using:"/>
+        android:layout_alignStart="@id/ride_button"
+        android:layout_above="@id/ride_button"
+        android:layout_marginBottom="16dp"
+        android:text="I want to..."
+        android:textSize="20sp"
+        android:textStyle="bold"/>
 
-    <Button
+    <TextView
+        android:id="@+id/where_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/my_location_button"
+        android:layout_below="@id/middle_divider"
+        android:layout_marginTop="32dp"
+        android:text="From where?"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/my_location_button"
         android:layout_width="300dp"
-        android:layout_height="36dp"
-        android:layout_below="@id/location_label_text_view"
+        android:layout_height="56dp"
+        android:layout_below="@id/where_text_view"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="27dp"
+        android:layout_marginTop="16dp"
         android:enabled="false"
-        android:text="My location"/>
+        android:text="Use my location"
+        android:textColor="@android:color/white"
+        app:backgroundTint="@color/search_location_button_tint"/>
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/enter_location_button"
         android:layout_width="300dp"
-        android:layout_height="36dp"
+        android:layout_height="56dp"
         android:layout_below="@id/my_location_button"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        app:backgroundTint="@color/search_location_button_tint"
         android:enabled="false"
-        android:text="Enter a location"/>
+        android:text="Enter a location"
+        android:textColor="@android:color/white"/>
 
     <ProgressBar
         android:id="@+id/indeterminate_progress_bar"

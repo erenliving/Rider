@@ -15,9 +15,13 @@ public interface SearchLocationContract {
 
     interface View extends BaseView<Presenter> {
 
+        void setSelectedSearchButton(SearchMode searchMode);
+
         void enableLocationButtons();
 
         void setLoadingIndicator(boolean active);
+
+        void setLoadingIndicatorStatus(String status);
 
         boolean checkFineLocationPermission();
 

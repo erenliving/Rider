@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +51,8 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
 
     private static final int PERMISSION_REQUEST_CODE = 0;
 
-    private TextView locationLabelTextView, loadingStatusTextView;
+    private View middleDivider;
+    private TextView wantTextView, whereTextView, loadingStatusTextView;
     private Button rideButton, dockButton, myLocationButton, enterLocationButton;
     private ProgressBar indeterminateProgressBar;
 
@@ -72,7 +74,9 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        locationLabelTextView = (TextView) view.findViewById(R.id.location_label_text_view);
+        middleDivider = view.findViewById(R.id.middle_divider);
+        wantTextView = (TextView) view.findViewById(R.id.want_text_view);
+        whereTextView = (TextView) view.findViewById(R.id.where_text_view);
         loadingStatusTextView = (TextView) view.findViewById(R.id.loading_status_text_view);
         rideButton = (Button) view.findViewById(R.id.ride_button);
         rideButton.setOnClickListener(new View.OnClickListener() {
@@ -168,6 +172,20 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
     }
 
     @Override
+    public void setSelectedSearchButton(SearchMode searchMode) {
+        switch (searchMode) {
+            case BIKES:
+                rideButton.setSelected(true);
+                dockButton.setSelected(false);
+                break;
+            case PARKING:
+                rideButton.setSelected(false);
+                dockButton.setSelected(true);
+                break;
+        }
+    }
+
+    @Override
     public void enableLocationButtons() {
         myLocationButton.setEnabled(true);
         enterLocationButton.setEnabled(true);
@@ -181,22 +199,31 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
     @Override
     public void setLoadingIndicator(boolean active) {
         if (active) {
+            middleDivider.setVisibility(View.GONE);
+            wantTextView.setVisibility(View.GONE);
             rideButton.setVisibility(View.GONE);
             dockButton.setVisibility(View.GONE);
-            locationLabelTextView.setVisibility(View.GONE);
+            whereTextView.setVisibility(View.GONE);
             myLocationButton.setVisibility(View.GONE);
             enterLocationButton.setVisibility(View.GONE);
             indeterminateProgressBar.setVisibility(View.VISIBLE);
             loadingStatusTextView.setVisibility(View.VISIBLE);
         } else {
+            wantTextView.setVisibility(View.VISIBLE);
+            middleDivider.setVisibility(View.VISIBLE);
             rideButton.setVisibility(View.VISIBLE);
             dockButton.setVisibility(View.VISIBLE);
-            locationLabelTextView.setVisibility(View.VISIBLE);
+            whereTextView.setVisibility(View.VISIBLE);
             myLocationButton.setVisibility(View.VISIBLE);
             enterLocationButton.setVisibility(View.VISIBLE);
             indeterminateProgressBar.setVisibility(View.GONE);
             loadingStatusTextView.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void setLoadingIndicatorStatus(String status) {
+        loadingStatusTextView.setText(status);
     }
 
     /**
@@ -237,6 +264,7 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
         if (view != null) {
             Snackbar.make(view,
                     R.string.location_permission_explanation, Snackbar.LENGTH_LONG)
+                    .setActionTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimary))
                     .setAction(R.string.location_permission_explanation_action, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
