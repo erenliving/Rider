@@ -26,6 +26,7 @@ public class BikesPresenter implements BikesContract.Presenter,
     private Station mCurrentStation;
 
     private boolean mFirstLoad = true;
+    private int mStationIndex = 0;
 
     public BikesPresenter(BikesContract.View bikesView, SwipeDeckAdapter swipeDeckAdapter, LatLng
             location, Stations stations) {
@@ -67,16 +68,30 @@ public class BikesPresenter implements BikesContract.Presenter,
         }
     }
 
+    private void incrementStationIndex() {
+        mStationIndex++;
+    }
+
+    private LatLng getCurrentStationLocation() {
+        if (mStationIndex >= mStations.stationBeanList.size()) {
+            return null;
+        } else {
+            return mStations.stationBeanList.get(mStationIndex).getLocation();
+        }
+    }
+
     //region SwipeDeckCallback methods
 
     @Override
     public void cardSwipedLeft(long stableId) {
-        mBikesView.showToast("Station rejected!");
+        incrementStationIndex();
+        mBikesView.showRejectedAnimation();
     }
 
     @Override
     public void cardSwipedRight(long stableId) {
-        mBikesView.showToast("Station matched!");
+        mBikesView.disableCardSwiping();
+        mBikesView.startNavigationToStation(mLocation, getCurrentStationLocation());
     }
 
     //endregion

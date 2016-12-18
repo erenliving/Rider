@@ -1,0 +1,24 @@
+<resources>
+    <!--
+    Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=AE:FF:A4:29:FD:9E:C0:04:2D:46:35:A9:EC:23:07:52:4E:CC:8D:49%3Bcom.erenlivingstone.rider.appscreens.navigation
+
+    You can also add your credentials to an existing key, using this line:
+    AE:FF:A4:29:FD:9E:C0:04:2D:46:35:A9:EC:23:07:52:4E:CC:8D:49;com.erenlivingstone.rider.appscreens.navigation
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyDP8wDTlvMdO6JKXqWJok7ilblvlUusCSQ
+    </string>
+    <string name="google_maps_directions_key" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyBTYyO6zUVr8SoN9Kmmvfsq1d0wcAguS8I
+    </string>
+</resources>

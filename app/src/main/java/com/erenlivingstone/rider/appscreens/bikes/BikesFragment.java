@@ -8,17 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.erenlivingstone.rider.R;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * A {@link Fragment} subclass containing a CardView with
  * information on the nearest bikes to the search location.
  *
  * Activities that contain this fragment must implement the
- * {@link BikesFragment.OnBikesFragmentInteractionListener} interface
+ * {@link OnStartNavigationToStationListener} interface
  * to handle interaction events.
  *
  * Use the {@link BikesFragment#newInstance} factory method to
@@ -30,11 +30,11 @@ public class BikesFragment extends Fragment implements BikesContract.View {
 
     private BikesContract.Presenter mPresenter;
 
-    public interface OnBikesFragmentInteractionListener {
-        void onBikesFragmentInteraction(boolean selectBike);
+    public interface OnStartNavigationToStationListener {
+        void onStartNavigationToStation(LatLng origin, LatLng destination);
     }
 
-    private OnBikesFragmentInteractionListener mListener;
+    private OnStartNavigationToStationListener mListener;
 
     private SwipeDeck mSwipeDeck;
     private ProgressBar mIndeterminateProgressBar;
@@ -73,11 +73,11 @@ public class BikesFragment extends Fragment implements BikesContract.View {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnBikesFragmentInteractionListener) {
-            mListener = (OnBikesFragmentInteractionListener) context;
+        if (context instanceof OnStartNavigationToStationListener) {
+            mListener = (OnStartNavigationToStationListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnBikesFragmentInteractionListener");
+                    + " must implement OnStartNavigationToStationListener");
         }
     }
 
@@ -117,8 +117,20 @@ public class BikesFragment extends Fragment implements BikesContract.View {
     }
 
     @Override
-    public void showToast(String text) {
-        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+    public void showRejectedAnimation() {
+        // TODO: add a TextView and animate its alpha from 0 -> 100 -> 0 quickly
+    }
+
+    @Override
+    public void disableCardSwiping() {
+        mSwipeDeck.setEnabled(false);
+    }
+
+    @Override
+    public void startNavigationToStation(LatLng origin, LatLng destination) {
+        if (mListener != null) {
+            mListener.onStartNavigationToStation(origin, destination);
+        }
     }
 
     //endregion

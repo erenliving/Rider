@@ -8,13 +8,19 @@ import com.erenlivingstone.rider.R;
 import com.erenlivingstone.rider.appscreens.bikes.BikesFragment;
 import com.erenlivingstone.rider.appscreens.bikes.BikesPresenter;
 import com.erenlivingstone.rider.appscreens.card.SwipeDeckAdapter;
+import com.erenlivingstone.rider.appscreens.navigation.NavigationActivity;
 import com.erenlivingstone.rider.appscreens.searchlocation.SearchLocationActivity;
 import com.erenlivingstone.rider.constants.SearchMode;
 import com.erenlivingstone.rider.data.model.Stations;
 import com.google.android.gms.maps.model.LatLng;
 
 public class CardActivity extends AppCompatActivity
-        implements BikesFragment.OnBikesFragmentInteractionListener {
+        implements BikesFragment.OnStartNavigationToStationListener {
+
+    public static final String TAG = CardActivity.class.getSimpleName();
+
+    public static final String EXTRA_ORIGIN = "com.eren.rider.EXTRA_ORIGIN";
+    public static final String EXTRA_DESTINATION = "com.eren.rider.EXTRA_DESTINATION";
 
     private SearchMode searchMode;
     private LatLng location;
@@ -40,7 +46,7 @@ public class CardActivity extends AppCompatActivity
                             .add(R.id.container, bikesFragment, BikesFragment.TAG)
                             .commit();
 
-                    // TODO: filter the Stations list to remove stations with no available bikes
+                    filterEmptyStations(stations);
 
                     // Construct the SwipeDeckAdapter here so it has a Context (to keep it hidden from
                     // Presenter layer) and inject it into the Presenter
@@ -63,8 +69,19 @@ public class CardActivity extends AppCompatActivity
         }
     }
 
+    private void filterEmptyStations(Stations stations) {
+        for (int i = stations.stationBeanList.size() - 1; i >= 0; i--) {
+            if (stations.stationBeanList.get(i).getAvailableBikes() <= 0) {
+                stations.stationBeanList.remove(i);
+            }
+        }
+    }
+
     @Override
-    public void onBikesFragmentInteraction(boolean selectBike) {
-        // TODO: complete this method
+    public void onStartNavigationToStation(LatLng origin, LatLng destination) {
+        Intent intent = new Intent(this, NavigationActivity.class);
+        intent.putExtra(EXTRA_ORIGIN, origin);
+        intent.putExtra(EXTRA_DESTINATION, destination);
+        startActivity(intent);
     }
 }

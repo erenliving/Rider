@@ -8,11 +8,15 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -24,6 +28,8 @@ import java.util.Locale;
 public class Utils {
 
     public static final String TAG = Utils.class.getSimpleName();
+
+    //region Location Utils methods
 
     private static final String PREFERENCES_LATITUDE = "lat";
     private static final String PREFERENCES_LONGITUDE = "lng";
@@ -67,6 +73,10 @@ public class Utils {
         return null;
     }
 
+    //endregion
+
+    //region String Utils methods
+
     /**
      * Transforms the input String into one ready for display in the UI
      *
@@ -103,4 +113,27 @@ public class Utils {
             return String.format(Locale.getDefault(), "%.0fm away", distance);
         }
     }
+
+    public static String getFormattedLocation(double latitude, double longitude) {
+        return Double.toString(latitude) + "," + Double.toString(longitude);
+    }
+
+    //endregion
+
+    //region GoogleMap Utils methods
+
+    public static void fixZoomForLatLngs(GoogleMap googleMap, List<LatLng> latLngs) {
+        if (latLngs != null && latLngs.size() > 0) {
+            LatLngBounds.Builder bc = new LatLngBounds.Builder();
+
+            for (LatLng latLng : latLngs) {
+                bc.include(latLng);
+            }
+
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bc.build(), 100), 4000,
+                    null);
+        }
+    }
+
+    //endregion
 }
