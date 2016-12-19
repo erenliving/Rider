@@ -22,4 +22,7 @@ public class Constants {
 
     public static final String DIRECTIONS_STATUS_OK = "OK";
 
+    public static final int EMOJI_BICYCLE_UNICODE = 0x1F6B2;
+    public static final int EMOJI_CHEQUERED_FLAG_UNICODE = 0x1F3C1;
+
 }

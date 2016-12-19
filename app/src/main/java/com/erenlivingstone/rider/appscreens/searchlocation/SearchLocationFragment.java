@@ -1,6 +1,8 @@
 package com.erenlivingstone.rider.appscreens.searchlocation;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -14,17 +16,23 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.AnimationSet;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.erenlivingstone.rider.R;
+import com.erenlivingstone.rider.animations.ResizeAnimation;
+import com.erenlivingstone.rider.constants.Constants;
 import com.erenlivingstone.rider.constants.LocationMode;
 import com.erenlivingstone.rider.constants.SearchMode;
 import com.erenlivingstone.rider.data.model.Stations;
 import com.erenlivingstone.rider.services.UtilityService;
 import com.erenlivingstone.rider.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
+
+import static com.erenlivingstone.rider.R.string.dock;
 
 /**
  * A {@link Fragment} subclass containing 2 buttons to
@@ -50,8 +58,9 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
     private OnSearchLocationFragmentInteractionListener mListener;
 
     private static final int PERMISSION_REQUEST_CODE = 0;
+    private int mShortAnimationDuration;
 
-    private View middleDivider;
+    private View searchLocationView, loadingView , middleDivider;
     private TextView wantTextView, whereTextView, loadingStatusTextView;
     private Button rideButton, dockButton, myLocationButton, enterLocationButton;
     private ProgressBar indeterminateProgressBar;
@@ -65,6 +74,14 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Retrieve and cache the system's default "short" animation time.
+        mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -74,24 +91,35 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        searchLocationView = view.findViewById(R.id.search_location_view);
+        loadingView = view.findViewById(R.id.loading_view);
         middleDivider = view.findViewById(R.id.middle_divider);
         wantTextView = (TextView) view.findViewById(R.id.want_text_view);
         whereTextView = (TextView) view.findViewById(R.id.where_text_view);
         loadingStatusTextView = (TextView) view.findViewById(R.id.loading_status_text_view);
+
         rideButton = (Button) view.findViewById(R.id.ride_button);
+        String rideEmoji = String.format(getString(R.string.ride), Utils.getEmojiByUnicode(Constants
+                .EMOJI_BICYCLE_UNICODE));
+        rideButton.setText(rideEmoji);
         rideButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mPresenter.onSearchModeButtonPressed(SearchMode.BIKES);
             }
         });
+
         dockButton = (Button) view.findViewById(R.id.dock_button);
+        String dockEmoji = String.format(getString(dock), Utils.getEmojiByUnicode(Constants
+                .EMOJI_CHEQUERED_FLAG_UNICODE));
+        dockButton.setText(dockEmoji);
         dockButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mPresenter.onSearchModeButtonPressed(SearchMode.PARKING);
             }
         });
+
         myLocationButton = (Button) view.findViewById(R.id.my_location_button);
         myLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,6 +192,60 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
 
     //endregion
 
+    private void crossfadeButtonsToLoading() {
+        // Set the loading view to 0% opacity but visible, so that it is visible
+        // (but fully transparent) during the animation.
+        loadingView.setAlpha(0f);
+        loadingView.setVisibility(View.VISIBLE);
+
+        // Animate the loading view to 100% opacity, and clear any animation
+        // listener set on the view.
+        loadingView.animate()
+                .alpha(1f)
+                .setDuration(mShortAnimationDuration)
+                .setListener(null);
+
+        // Animate the searchLocation view to 0% opacity. After the animation ends,
+        // set its visibility to GONE as an optimization step (it won't
+        // participate in layout passes, etc.)
+        searchLocationView.animate()
+                .alpha(0f)
+                .setDuration(mShortAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        searchLocationView.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void crossfadeLoadingToButtons() {
+        // Set the searchLocation view to 0% opacity but visible, so that it is visible
+        // (but fully transparent) during the animation.
+        searchLocationView.setAlpha(0f);
+        searchLocationView.setVisibility(View.VISIBLE);
+
+        // Animate the searchLocation view to 100% opacity, and clear any animation
+        // listener set on the view.
+        searchLocationView.animate()
+                .alpha(1f)
+                .setDuration(mShortAnimationDuration)
+                .setListener(null);
+
+        // Animate the loading view to 0% opacity. After the animation ends,
+        // set its visibility to GONE as an optimization step (it won't
+        // participate in layout passes, etc.)
+        loadingView.animate()
+                .alpha(0f)
+                .setDuration(mShortAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        loadingView.setVisibility(View.GONE);
+                    }
+                });
+    }
+
     //region SearchLocationContract.View methods
 
     @Override
@@ -186,9 +268,48 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
     }
 
     @Override
-    public void enableLocationButtons() {
-        myLocationButton.setEnabled(true);
-        enterLocationButton.setEnabled(true);
+    public void showLocationButtonsAnimation() {
+        if (whereTextView.getVisibility() != View.VISIBLE) {
+            middleDivider.setVisibility(View.VISIBLE);
+
+            AnimationSet animationSet = new AnimationSet(true);
+
+            ResizeAnimation resizeAnimation = new ResizeAnimation(middleDivider, 0, middleDivider
+                    .getWidth(), middleDivider.getHeight(), middleDivider.getHeight());
+            resizeAnimation.setDuration(mShortAnimationDuration);
+            animationSet.addAnimation(resizeAnimation);
+
+            AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
+            animationSet.addAnimation(alphaAnimation);
+
+            middleDivider.startAnimation(animationSet);
+
+            whereTextView.setVisibility(View.VISIBLE);
+            whereTextView.setAlpha(0);
+            whereTextView.setY(whereTextView.getY() - whereTextView.getHeight());
+            whereTextView.animate()
+                    .translationYBy(whereTextView.getHeight())
+                    .alpha(1)
+                    .setDuration(mShortAnimationDuration);
+
+            myLocationButton.setVisibility(View.VISIBLE);
+            myLocationButton.setAlpha(0);
+            myLocationButton.setY(myLocationButton.getY() - myLocationButton.getHeight());
+            myLocationButton.animate()
+                    .translationYBy(myLocationButton.getHeight())
+                    .alpha(1)
+                    .setDuration(mShortAnimationDuration)
+                    .setStartDelay(mShortAnimationDuration);
+
+            enterLocationButton.setVisibility(View.VISIBLE);
+            enterLocationButton.setAlpha(0);
+            enterLocationButton.setY(enterLocationButton.getY() - enterLocationButton.getHeight());
+            enterLocationButton.animate()
+                    .translationYBy(enterLocationButton.getHeight())
+                    .alpha(1)
+                    .setDuration(mShortAnimationDuration)
+                    .setStartDelay(mShortAnimationDuration * 2);
+        }
     }
 
     /**
@@ -199,31 +320,20 @@ public class SearchLocationFragment extends Fragment implements SearchLocationCo
     @Override
     public void setLoadingIndicator(boolean active) {
         if (active) {
-            middleDivider.setVisibility(View.GONE);
-            wantTextView.setVisibility(View.GONE);
-            rideButton.setVisibility(View.GONE);
-            dockButton.setVisibility(View.GONE);
-            whereTextView.setVisibility(View.GONE);
-            myLocationButton.setVisibility(View.GONE);
-            enterLocationButton.setVisibility(View.GONE);
-            indeterminateProgressBar.setVisibility(View.VISIBLE);
-            loadingStatusTextView.setVisibility(View.VISIBLE);
+            crossfadeButtonsToLoading();
         } else {
-            wantTextView.setVisibility(View.VISIBLE);
-            middleDivider.setVisibility(View.VISIBLE);
-            rideButton.setVisibility(View.VISIBLE);
-            dockButton.setVisibility(View.VISIBLE);
-            whereTextView.setVisibility(View.VISIBLE);
-            myLocationButton.setVisibility(View.VISIBLE);
-            enterLocationButton.setVisibility(View.VISIBLE);
-            indeterminateProgressBar.setVisibility(View.GONE);
-            loadingStatusTextView.setVisibility(View.GONE);
+            crossfadeLoadingToButtons();
         }
     }
 
     @Override
-    public void setLoadingIndicatorStatus(String status) {
-        loadingStatusTextView.setText(status);
+    public void setLoadingStatusForLocation() {
+        loadingStatusTextView.setText(getString(R.string.getting_location));
+    }
+
+    @Override
+    public void setLoadingStatusForStations() {
+        loadingStatusTextView.setText(getString(R.string.loading_stations));
     }
 
     /**

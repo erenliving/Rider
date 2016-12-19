@@ -1,11 +1,11 @@
 <com.daprlabs.aaron.swipedeck.layouts.SwipeRelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-                                                        xmlns:swipedeck="http://schemas.android.com/apk/res-auto"
-                                                        xmlns:tools="http://schemas.android.com/tools"
-                                                        android:id="@+id/swipeLayout"
-                                                        android:layout_width="match_parent"
-                                                        android:layout_height="match_parent"
-                                                        tools:context="com.erenlivingstone.rider.appscreens.bikes.BikesFragment">
+    xmlns:swipedeck="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.erenlivingstone.rider.appscreens.bikes.BikesFragment">
 
     <com.daprlabs.aaron.swipedeck.SwipeDeck
         android:id="@+id/swipe_deck"
@@ -18,6 +18,17 @@
         android:paddingTop="32dp"
         swipedeck:card_spacing="8dp"
         swipedeck:max_visible="5"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:paddingTop="16dp"
+        android:text="@string/bikes_swipe_instructions"/>
 
     <ProgressBar
         android:id="@+id/indeterminate_progress_bar"

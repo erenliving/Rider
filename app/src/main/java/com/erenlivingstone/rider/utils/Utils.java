@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.erenlivingstone.rider.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -106,16 +107,26 @@ public class Utils {
      * @param distance the distance in meters
      * @return the String representation of the distance in meters or kilometers
      */
-    public static String getFormattedDistanceForDisplay(double distance) {
+    public static String getFormattedDistanceForDisplay(Context context, double distance) {
         if (distance >= 1000) {
-            return String.format(Locale.getDefault(), "%.2fkm away", distance/1000);
+            return String.format(Locale.getDefault(), context.getString(R.string.distance_kilometres), distance/1000);
         } else {
-            return String.format(Locale.getDefault(), "%.0fm away", distance);
+            return String.format(Locale.getDefault(), context.getString(R.string.distance_metres), distance);
         }
     }
 
     public static String getFormattedLocation(double latitude, double longitude) {
         return Double.toString(latitude) + "," + Double.toString(longitude);
+    }
+
+    /**
+     * Converts the given Unicode value to a useable String
+     *
+     * @param unicode the unicode char value
+     * @return String representation of unicode char
+     */
+    public static String getEmojiByUnicode(int unicode){
+        return new String(Character.toChars(unicode));
     }
 
     //endregion

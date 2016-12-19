@@ -5,100 +5,116 @@
                 android:layout_height="match_parent"
                 tools:context="com.erenlivingstone.rider.appscreens.searchlocation.SearchLocationFragment">
 
-    <View
-        android:id="@+id/middle_divider"
+    <RelativeLayout
+        android:id="@+id/search_location_view"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_centerInParent="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:background="@android:color/darker_gray"/>
+        android:layout_height="match_parent">
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/dock_button"
-        android:layout_width="300dp"
-        android:layout_height="56dp"
-        android:layout_above="@id/middle_divider"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="48dp"
-        android:text="Dock!"
-        android:textColor="@android:color/white"
-        app:backgroundTint="@color/search_location_button_tint"/>
+        <View
+            android:id="@+id/middle_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:background="@android:color/darker_gray"
+            android:visibility="invisible"/>
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/ride_button"
-        android:layout_width="300dp"
-        android:layout_height="56dp"
-        android:layout_above="@id/dock_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:text="Ride!"
-        android:textColor="@android:color/white"
-        app:backgroundTint="@color/search_location_button_tint"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/dock_button"
+            android:layout_width="300dp"
+            android:layout_height="56dp"
+            android:layout_above="@id/middle_divider"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="48dp"
+            android:text="@string/dock"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/search_location_button_tint"/>
 
-    <TextView
-        android:id="@+id/want_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@id/ride_button"
-        android:layout_above="@id/ride_button"
-        android:layout_marginBottom="16dp"
-        android:text="I want to..."
-        android:textSize="20sp"
-        android:textStyle="bold"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/ride_button"
+            android:layout_width="300dp"
+            android:layout_height="56dp"
+            android:layout_above="@id/dock_button"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            android:text="@string/ride"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/search_location_button_tint"/>
 
-    <TextView
-        android:id="@+id/where_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/my_location_button"
-        android:layout_below="@id/middle_divider"
-        android:layout_marginTop="32dp"
-        android:text="From where?"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/want_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/ride_button"
+            android:layout_alignStart="@id/ride_button"
+            android:layout_marginBottom="16dp"
+            android:text="@string/want"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/my_location_button"
-        android:layout_width="300dp"
-        android:layout_height="56dp"
-        android:layout_below="@id/where_text_view"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:enabled="false"
-        android:text="Use my location"
-        android:textColor="@android:color/white"
-        app:backgroundTint="@color/search_location_button_tint"/>
+        <TextView
+            android:id="@+id/where_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/my_location_button"
+            android:layout_below="@id/middle_divider"
+            android:layout_marginTop="32dp"
+            android:text="@string/where"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="invisible"/>
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/enter_location_button"
-        android:layout_width="300dp"
-        android:layout_height="56dp"
-        android:layout_below="@id/my_location_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        app:backgroundTint="@color/search_location_button_tint"
-        android:enabled="false"
-        android:text="Enter a location"
-        android:textColor="@android:color/white"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/my_location_button"
+            android:layout_width="300dp"
+            android:layout_height="56dp"
+            android:layout_below="@id/where_text_view"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="@string/my_location"
+            android:textColor="@android:color/white"
+            android:visibility="invisible"
+            app:backgroundTint="@color/search_location_button_tint"/>
 
-    <ProgressBar
-        android:id="@+id/indeterminate_progress_bar"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:theme="@style/CircularProgress"
-        android:visibility="gone"/>
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/enter_location_button"
+            android:layout_width="300dp"
+            android:layout_height="56dp"
+            android:layout_below="@id/my_location_button"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="@string/enter_location"
+            android:textColor="@android:color/white"
+            android:visibility="invisible"
+            app:backgroundTint="@color/search_location_button_tint"/>
 
-    <TextView
-        android:id="@+id/loading_status_text_view"
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/loading_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/indeterminate_progress_bar"
-        android:layout_centerInParent="true"
-        android:text="Loading Stations"
-        android:textAlignment="center"
-        android:visibility="gone"/>
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/indeterminate_progress_bar"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:theme="@style/CircularProgress"/>
+
+        <TextView
+            android:id="@+id/loading_status_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/indeterminate_progress_bar"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="8dp"
+            android:text="@string/loading_stations"
+            android:textAlignment="center"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>

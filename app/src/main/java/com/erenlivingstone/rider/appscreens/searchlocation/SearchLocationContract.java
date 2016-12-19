@@ -17,11 +17,13 @@ public interface SearchLocationContract {
 
         void setSelectedSearchButton(SearchMode searchMode);
 
-        void enableLocationButtons();
+        void showLocationButtonsAnimation();
 
         void setLoadingIndicator(boolean active);
 
-        void setLoadingIndicatorStatus(String status);
+        void setLoadingStatusForLocation();
+
+        void setLoadingStatusForStations();
 
         boolean checkFineLocationPermission();
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.ColorUtils;
 import android.util.Log;
 
 import com.erenlivingstone.rider.R;
@@ -88,8 +89,12 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        addMarkerToMap(origin, "Start", BitmapDescriptorFactory.HUE_RED);
-        addMarkerToMap(destination, "Finish", BitmapDescriptorFactory.HUE_GREEN);
+        float[] riderBlueHSV = new float[3];
+        ColorUtils.colorToHSL(ContextCompat.getColor(this, R.color.colorAccent), riderBlueHSV);
+        float[] riderGreenHSV = new float[3];
+        ColorUtils.colorToHSL(ContextCompat.getColor(this, R.color.colorPrimary), riderGreenHSV);
+        addMarkerToMap(origin, getString(R.string.start), riderBlueHSV[0]);
+        addMarkerToMap(destination, getString(R.string.finish), riderGreenHSV[0]);
 
         if (Utils.checkFineLocationPermission(this)) {
             mMap.setMyLocationEnabled(true);

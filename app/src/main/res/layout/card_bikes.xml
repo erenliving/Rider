@@ -17,36 +17,48 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:background="@color/colorPrimaryDark"
             android:ellipsize="end"
             android:maxLines="1"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp"
-            android:paddingTop="8dp"
+            android:padding="8dp"
             android:text="St George St / Bloor St W"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold"/>
 
-        <ImageView
-            android:id="@+id/thumbnail_image_view"
+        <RelativeLayout
+            android:id="@+id/thumbnail_container"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="wrap_content"
             android:layout_below="@id/station_name_text_view"
-            android:layout_margin="16dp"
-            android:background="@android:color/white"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/bike1"/>
+            android:paddingBottom="16dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp">
+
+            <ImageView
+                android:id="@+id/thumbnail_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:layout_centerInParent="true"
+                android:background="@android:color/white"
+                android:contentDescription="@string/bike_image_content_description"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/bike1"/>
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/available_bikes_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/thumbnail_image_view"
-            android:paddingBottom="8dp"
+            android:layout_below="@id/thumbnail_container"
+            android:background="@color/colorAccent"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
-            android:text="15 available bikes"
+            android:paddingTop="8dp"
+            android:text="@string/available_bikes"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold"/>
@@ -56,7 +68,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/available_bikes_text_view"
+            android:background="@color/colorAccent"
+            android:ellipsize="end"
             android:maxLines="1"
+            android:paddingBottom="8dp"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"
             android:text="5min walk (500m)"
@@ -65,10 +80,11 @@
 
         <TextView
             android:id="@+id/last_updated_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/distance_text_view"
-            android:maxLines="3"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:padding="8dp"
             android:text="Last Updated: 2016-12-01 12:34pm EST"
             android:textColor="@android:color/white"

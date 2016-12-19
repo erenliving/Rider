@@ -59,7 +59,7 @@ public class SearchLocationPresenter implements SearchLocationContract.Presenter
         mSearchMode = searchMode;
 
         mSearchLocationView.setSelectedSearchButton(searchMode);
-        mSearchLocationView.enableLocationButtons();
+        mSearchLocationView.showLocationButtonsAnimation();
     }
 
     @Override
@@ -94,7 +94,7 @@ public class SearchLocationPresenter implements SearchLocationContract.Presenter
     @Override
     public void fineLocationPermissionGranted() {
         mSearchLocationView.setLoadingIndicator(true);
-        mSearchLocationView.setLoadingIndicatorStatus("Getting location...");
+        mSearchLocationView.setLoadingStatusForLocation();
 
         // Start a request for location, wait for local broadcast to receive latest location
         mSearchLocationView.startRequestLocationService();
@@ -105,7 +105,7 @@ public class SearchLocationPresenter implements SearchLocationContract.Presenter
      * occurring, and triggers an HTTP call to GET the latest Stations data from the API.
      */
     private void loadStations() {
-        mSearchLocationView.setLoadingIndicatorStatus("Loading Stations...");
+        mSearchLocationView.setLoadingStatusForStations();
 
         // Build and queue a GET request to get the latest data from the BikeShare API
         Retrofit retrofit = new Retrofit.Builder()
